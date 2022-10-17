@@ -79,7 +79,7 @@ import org.apache.tools.ant.taskdefs.condition.Os
  */
 
 project.ext.react = [
-    enableHermes: true,  // clean and rebuild if changing
+    enableHermes: false,  // clean and rebuild if changing
 ]
 
 project.ext["isReanimatedExampleApp"] = true
@@ -247,6 +247,11 @@ android {
             }
 
         }
+    }
+
+    packagingOptions {
+        exclude "**/libjsc.so"
+        exclude "**/libjscexecutor.so"
     }
 }
 
