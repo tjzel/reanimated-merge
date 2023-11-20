@@ -1582,4 +1582,107 @@ describe('babel plugin', () => {
       expect(code).toMatchSnapshot();
     });
   });
+
+  describe('for worklet minification', () => {
+    it('minifies worklets in production builds', () => {
+      const input = html`<script>
+        function foo(x) {
+          'worklet';
+          return x + 2;
+        }
+      </script>`;
+
+      const current = process.env.BABEL_ENV;
+      process.env.BABEL_ENV = 'production';
+      const { code } = runPlugin(input);
+      process.env.BABEL_ENV = current;
+      expect(code).toContainCount('foo', 7);
+      expect(code).toMatchSnapshot();
+    });
+
+    it("doesn't minify worklets in dev builds", () => {
+      const input = html`<script>
+        function foo(x) {
+          'worklet';
+          return x + 2;
+        }
+      </script>`;
+
+      const { code } = runPlugin(input);
+      expect(code).toContainCount('foo', 9);
+      expect(code).toMatchSnapshot();
+    });
+
+    it('minifies nested worklets ` in production builds', () => {
+      const input = html`<script>
+        function foo(x) {
+          'worklet';
+          x = 2;
+          function bar(y) {
+            'worklet';
+            y = 3;
+          }
+        }
+      </script>`;
+
+      const current = process.env.BABEL_ENV;
+      process.env.BABEL_ENV = 'production';
+      const { code } = runPlugin(input);
+      process.env.BABEL_ENV = current;
+      expect(code).toContainCount('foo', 7);
+      expect(code).toContainCount('bar', 7);
+      expect(code).toMatchSnapshot();
+    });
+
+    it("doesn't minify nested worklets in dev builds", () => {
+      const input = html`<script>
+        function foo(x) {
+          'worklet';
+          x = 2;
+          function bar(y) {
+            'worklet';
+            y = 3;
+          }
+        }
+      </script>`;
+
+      const { code } = runPlugin(input);
+      expect(code).toContainCount('foo', 9);
+      expect(code).toContainCount('bar', 10);
+      expect(code).toMatchSnapshot();
+    });
+
+    it('minifies recursive worklets in production builds', () => {
+      const input = html`<script>
+        function foo(x) {
+          'worklet';
+          if (x > 0) {
+            foo(x - 1);
+          }
+        }
+      </script>`;
+
+      const current = process.env.BABEL_ENV;
+      process.env.BABEL_ENV = 'production';
+      const { code } = runPlugin(input);
+      process.env.BABEL_ENV = current;
+      expect(code).toContainCount('foo', 8);
+      expect(code).toMatchSnapshot();
+    });
+
+    it("doesn't minify recursive worklets in dev builds", () => {
+      const input = html`<script>
+        function foo(x) {
+          'worklet';
+          if (x > 0) {
+            foo(x - 1);
+          }
+        }
+      </script>`;
+
+      const { code } = runPlugin(input);
+      expect(code).toContainCount('foo', 12);
+      expect(code).toMatchSnapshot();
+    });
+  });
 });
