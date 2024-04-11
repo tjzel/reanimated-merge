@@ -13,6 +13,96 @@ import { isFabric, isWeb } from '../PlatformChecker';
 
 const IS_WEB = isWeb();
 
+/**
+ * Lets you get a reference of a view that you can use inside a worklet.
+ *
+ * @returns An object with a `.current` property which contains an instance of a component.
+ * @see https://docs.swmansion.com/react-native-reanimated/docs/core/useAnimatedRef
+ */
+export const useAnimatedRef: UseAnimatedRef = IS_WEB
+  ? useAnimatedRefWeb
+  : useAnimatedRefNative;
+
+function useAnimatedRefWeb<
+  TComponent extends Component
+>(): AnimatedRef<TComponent> {
+  const componentReference = useSharedValue<HTMLElement | null>(null);
+
+  const ref = useRef<AnimatedRef<TComponent>>();
+
+  if (!ref.current) {
+    const fun: AnimatedRef<TComponent> = <AnimatedRef<TComponent>>((
+      component
+    ) => {
+      // Enters when ref is set by attaching to a component.
+      if (component) {
+        componentReference.value = getComponentOrScrollable(component);
+        fun.getTag = () => getTagFromComponent(component);
+
+        fun.current = component;
+      }
+      return componentReference.value;
+    });
+
+    fun.current = null;
+    ref.current = fun;
+  }
+
+  return ref.current;
+}
+
+function useAnimatedRefNative<
+  TComponent extends Component
+>(): AnimatedRef<TComponent> {
+  const componentReference = useSharedValue<number | ShadowNodeWrapper | null>(
+    -1
+  );
+  const viewName = useSharedValue<string | null>(null);
+
+  const ref = useRef<AnimatedRef<TComponent>>();
+
+  if (!ref.current) {
+    const fun: AnimatedRef<TComponent> = <AnimatedRef<TComponent>>((
+      component
+    ) => {
+      // enters when ref is set by attaching to a component
+      if (component) {
+        const getTag = () => getTagFromComponent(component);
+
+        componentReference.value = isFabric()
+          ? getShadowNodeWrapperFromComponent(component)
+          : getTag();
+
+        fun.getTag = getTag;
+
+        fun.current = component;
+        // viewName is required only on iOS with Paper
+        if (Platform.OS === 'ios' && !isFabric()) {
+          viewName.value =
+            (component as MaybeScrollableComponent)?.viewConfig
+              ?.uiViewClassName || 'RCTView';
+        }
+      }
+      return componentReference.value;
+    });
+
+    fun.current = null;
+
+    const animatedRefShareableHandle = makeShareableCloneRecursive({
+      __init: () => {
+        'worklet';
+        const f: AnimatedRefOnUI = () => componentReference.value;
+        f.viewName = viewName;
+        return f;
+      },
+    });
+    shareableMappingCache.set(fun, animatedRefShareableHandle);
+    ref.current = fun;
+  }
+
+  return ref.current;
+}
+
 interface MaybeScrollableComponent extends Component {
   getNativeScrollRef?: FlatList['getNativeScrollRef'];
   getScrollableNode?:
@@ -21,6 +111,16 @@ interface MaybeScrollableComponent extends Component {
   viewConfig?: {
     uiViewClassName?: string;
   };
+}
+
+function getTagFromComponent(component: MaybeScrollableComponent) {
+  return findNodeHandle(getComponentOrScrollable(component));
+}
+
+function getShadowNodeWrapperFromComponent(
+  component: MaybeScrollableComponent
+) {
+  return getShadowNodeWrapperFromRef(getComponentOrScrollable(component));
 }
 
 function getComponentOrScrollable(component: MaybeScrollableComponent) {
@@ -32,67 +132,6 @@ function getComponentOrScrollable(component: MaybeScrollableComponent) {
   return component;
 }
 
-/**
- * Lets you get a reference of a view that you can use inside a worklet.
- *
- * @returns An object with a `.current` property which contains an instance of a component.
- * @see https://docs.swmansion.com/react-native-reanimated/docs/core/useAnimatedRef
- */
-export function useAnimatedRef<
+type UseAnimatedRef = <
   TComponent extends Component
->(): AnimatedRef<TComponent> {
-  const tag = useSharedValue<number | ShadowNodeWrapper | null>(-1);
-  const viewName = useSharedValue<string | null>(null);
-
-  const ref = useRef<AnimatedRef<TComponent>>();
-
-  if (!ref.current) {
-    const fun: AnimatedRef<TComponent> = <AnimatedRef<TComponent>>((
-      component
-    ) => {
-      // enters when ref is set by attaching to a component
-      if (component) {
-        const getTagValueFunction = isFabric()
-          ? getShadowNodeWrapperFromRef
-          : findNodeHandle;
-
-        const getTagOrShadowNodeWrapper = () => {
-          return IS_WEB
-            ? getComponentOrScrollable(component)
-            : getTagValueFunction(getComponentOrScrollable(component));
-        };
-
-        tag.value = getTagOrShadowNodeWrapper();
-
-        // On Fabric we have to unwrap the tag from the shadow node wrapper
-        fun.getTag = isFabric()
-          ? () => findNodeHandle(getComponentOrScrollable(component))
-          : getTagOrShadowNodeWrapper;
-
-        fun.current = component;
-        // viewName is required only on iOS with Paper
-        if (Platform.OS === 'ios' && !isFabric()) {
-          viewName.value =
-            (component as MaybeScrollableComponent)?.viewConfig
-              ?.uiViewClassName || 'RCTView';
-        }
-      }
-      return tag.value;
-    });
-
-    fun.current = null;
-
-    const animatedRefShareableHandle = makeShareableCloneRecursive({
-      __init: () => {
-        'worklet';
-        const f: AnimatedRefOnUI = () => tag.value;
-        f.viewName = viewName;
-        return f;
-      },
-    });
-    shareableMappingCache.set(fun, animatedRefShareableHandle);
-    ref.current = fun;
-  }
-
-  return ref.current;
-}
+>() => AnimatedRef<TComponent>;
