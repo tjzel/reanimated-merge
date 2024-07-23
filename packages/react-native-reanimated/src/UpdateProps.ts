@@ -2,13 +2,21 @@
 'use strict';
 import type { MutableRefObject } from 'react';
 import { processColorsInProps } from './Colors';
-import type { ShadowNodeWrapper, SharedValue, StyleProps } from './commonTypes';
-import type { AnimatedStyle } from './helperTypes';
+import type {
+  ShadowNodeWrapper,
+  SharedValue,
+  StyleProps,
+  AnimatedStyle,
+} from './commonTypes';
 import type { Descriptor } from './hook/commonTypes';
-import type { ReanimatedHTMLElement } from './js-reanimated';
-import { _updatePropsJS } from './js-reanimated';
-import { isFabric, isJest, shouldBeUseWeb } from './PlatformChecker';
-import { runOnUIImmediately } from './threads';
+import {
+  isFabric,
+  isJest,
+  shouldBeUseWeb,
+  runOnUIImmediately,
+  _updatePropsJS,
+} from 'react-native-worklets';
+import type { ReanimatedHTMLElement } from 'react-native-worklets';
 
 let updateProps: (
   viewDescriptor: SharedValue<Descriptor[]>,

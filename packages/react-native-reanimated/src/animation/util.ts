@@ -17,6 +17,7 @@ import type {
   AnimationObject,
   Timestamp,
   AnimatableValueObject,
+  EasingFunction,
 } from '../commonTypes';
 import type {
   AffineMatrixFlat,
@@ -32,8 +33,8 @@ import {
   subtractMatrices,
   getRotationMatrix,
 } from './transformationMatrix/matrixUtils';
-import { shouldBeUseWeb } from '../PlatformChecker';
-import type { EasingFunction, EasingFunctionFactory } from '../Easing';
+import { shouldBeUseWeb } from 'react-native-worklets';
+import type { EasingFunctionFactory } from '../Easing';
 import { ReducedMotionManager } from '../ReducedMotion';
 
 let IN_STYLE_UPDATER = false;

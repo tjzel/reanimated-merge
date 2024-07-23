@@ -1,14 +1,14 @@
 'use strict';
-import NativeReanimatedModule from './NativeReanimated';
 import type {
   SensorConfig,
+  ShareableRef,
   SharedValue,
   Value3D,
   ValueRotation,
-  ShareableRef,
 } from './commonTypes';
 import { SensorType } from './commonTypes';
 import { makeMutable } from './mutables';
+import { NativeReanimatedModule } from './NativeReanimated';
 
 function initSensorData(
   sensorType: SensorType

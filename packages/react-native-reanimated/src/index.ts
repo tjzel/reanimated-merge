@@ -5,7 +5,7 @@ import * as Animated from './Animated';
 
 export default Animated;
 
-export type { WorkletRuntime } from './core';
+export type { WorkletRuntime } from 'react-native-worklets';
 export {
   runOnJS,
   runOnUI,
@@ -18,7 +18,10 @@ export {
   enableLayoutAnimations,
   getViewProp,
   executeOnUIRuntimeSync,
-} from './core';
+  isSharedValue,
+  startMapper,
+  stopMapper,
+} from 'react-native-worklets';
 export type {
   GestureHandlers,
   AnimatedRef,
@@ -93,7 +96,6 @@ export {
   useInterpolateConfig,
 } from './interpolateColor';
 export type {
-  EasingFunction,
   EasingFn,
   EasingFunctionFactory,
   EasingFactoryFn,
@@ -229,7 +231,6 @@ export {
   SharedTransition,
   SharedTransitionType,
 } from './layoutReanimation';
-export { isSharedValue } from './isSharedValue';
 export type {
   StyleProps,
   SharedValue,
@@ -245,6 +246,12 @@ export type {
   AnimatedKeyboardInfo,
   AnimatedKeyboardOptions,
   MeasuredDimensions,
+  EasingFunction,
+  AnimatedTransform,
+  TransformArrayItem,
+  AnimateStyle,
+  AnimatedStyle,
+  StylesOrDefault,
 } from './commonTypes';
 export {
   SensorType,
@@ -272,17 +279,11 @@ export type {
   AdaptTransforms,
   AnimateProps,
   AnimatedProps,
-  AnimatedTransform,
   TransformStyleTypes,
-  TransformArrayItem,
-  AnimateStyle,
-  AnimatedStyle,
   AnimatedStyleProp,
-  StylesOrDefault,
 } from './helperTypes';
 export type { AnimatedScrollViewProps } from './component/ScrollView';
 export type { FlatListPropsWithLayout } from './component/FlatList';
-export { startMapper, stopMapper } from './mappers';
 export {
   startScreenTransition,
   finishScreenTransition,

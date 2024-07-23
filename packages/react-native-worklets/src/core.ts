@@ -1,6 +1,9 @@
 'use strict';
-import NativeReanimatedModule from './NativeReanimated';
-import { isWeb, shouldBeUseWeb, isFabric } from './PlatformChecker';
+import { initializeUIRuntime } from './initializers';
+import { NativeReanimatedModule } from './NativeReanimated';
+import { isFabric, isWeb, shouldBeUseWeb } from './PlatformChecker';
+import { makeShareableCloneRecursive } from './shareables';
+
 import type {
   AnimatedKeyboardOptions,
   SensorConfig,
@@ -9,17 +12,8 @@ import type {
   Value3D,
   ValueRotation,
 } from './commonTypes';
-import { makeShareableCloneRecursive } from './shareables';
-import { initializeUIRuntime } from './initializers';
-import type { LayoutAnimationBatchItem } from './layoutReanimation/animationBuilder/commonTypes';
 import { SensorContainer } from './SensorContainer';
-
 export { startMapper, stopMapper } from './mappers';
-export { runOnJS, runOnUI, executeOnUIRuntimeSync } from './threads';
-export { createWorkletRuntime, runOnRuntime } from './runtimes';
-export type { WorkletRuntime } from './runtimes';
-export { makeShareable, makeShareableCloneRecursive } from './shareables';
-export { makeMutable } from './mutables';
 
 const SHOULD_BE_USE_WEB = shouldBeUseWeb();
 
@@ -191,7 +185,8 @@ export function enableLayoutAnimations(
 }
 
 export function configureLayoutAnimationBatch(
-  layoutAnimationsBatch: LayoutAnimationBatchItem[]
+  // layoutAnimationsBatch: LayoutAnimationBatchItem[]
+  layoutAnimationsBatch: any[]
 ): void {
   NativeReanimatedModule.configureLayoutAnimationBatch(layoutAnimationsBatch);
 }

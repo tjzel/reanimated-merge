@@ -1,9 +1,9 @@
 'use strict';
 import type {
-  ShareableRef,
-  StyleProps,
   TransformArrayItem,
   EasingFunction,
+  ShareableRef,
+  StyleProps,
 } from '../../commonTypes';
 
 export type LayoutAnimationsOptions =

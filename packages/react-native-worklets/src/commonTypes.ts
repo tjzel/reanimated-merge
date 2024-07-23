@@ -6,8 +6,6 @@ import type {
   ImageStyle,
 } from 'react-native';
 
-import type { WorkletStackDetails } from 'react-native-worklets';
-
 export type RequiredKeys<T, K extends keyof T> = T & Required<Pick<T, K>>;
 export interface StyleProps extends ViewStyle, TextStyle {
   originX?: number;
@@ -30,6 +28,12 @@ export interface SharedValue<Value = unknown> {
   ) => void;
 }
 
+export interface Mutable<Value = unknown> extends SharedValue<Value> {
+  _isReanimatedSharedValue: true;
+  _animation?: AnimationObject<Value> | null; // only in Native
+  _value: Value;
+}
+
 // The below type is used for HostObjects returned by the JSI API that don't have
 // any accessible fields or methods but can carry data that is accessed from the
 // c++ side. We add a field to the type to make it possible for typescript to recognize
@@ -47,9 +51,9 @@ export type FlatShareableRef<T> = T extends ShareableRef<infer U>
   ? ShareableRef<U>
   : ShareableRef<T>;
 
-type MapperRawInputs = unknown[];
+export type MapperRawInputs = unknown[];
 
-type MapperOutputs = SharedValue[];
+export type MapperOutputs = SharedValue[];
 
 export type MapperRegistry = {
   start: (
@@ -60,6 +64,12 @@ export type MapperRegistry = {
   ) => void;
   stop: (mapperID: number) => void;
 };
+
+export type WorkletStackDetails = [
+  error: Error,
+  lineOffset: number,
+  columnOffset: number
+];
 
 type WorkletClosure = Record<string, unknown>;
 
@@ -332,19 +342,3 @@ type DefaultStyle = ViewStyle & ImageStyle & TextStyle;
 export type AnimatedStyle<Style = DefaultStyle> =
   | Style
   | MaybeSharedValueRecursive<Style>;
-
-export type AnimatedTransform = MaybeSharedValueRecursive<
-  TransformsStyle['transform']
->;
-
-/**
- * @deprecated Please use {@link AnimatedStyle} type instead.
- */
-export type AnimateStyle<Style = DefaultStyle> = AnimatedStyle<Style>;
-
-/**
- * @deprecated This type is no longer relevant.
- */
-export type StylesOrDefault<T> = 'style' extends keyof T
-  ? MaybeSharedValueRecursive<T['style']>
-  : Record<string, unknown>;
