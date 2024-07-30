@@ -1,13 +1,22 @@
 'use strict';
 import { shouldBeUseWeb } from './PlatformChecker';
 import type { Mutable } from './commonTypes';
-
+import { isFirstReactRender, isReactRendering } from './reactUtils';
 import { shareableMappingCache } from './shareableMappingCache';
 import { makeShareableCloneRecursive } from './shareables';
 import { executeOnUIRuntimeSync, runOnUI } from './threads';
 import { valueSetter } from './valueSetter';
 
 const SHOULD_BE_USE_WEB = shouldBeUseWeb();
+
+const invalidReadWarning =
+  '[Reanimated] Reading from `value` during component render. Please ensure that you do not access the `value` property while React is rendering a component.';
+const invalidWriteWarning =
+  '[Reanimated] Writing to `value` during component render. Please ensure that you do not access the `value` property while React is rendering a component.';
+
+function shouldWarnInvalidAccess() {
+  return isReactRendering() && !isFirstReactRender();
+}
 
 type Listener<Value> = (newValue: Value) => void;
 
@@ -70,12 +79,19 @@ function makeMutableNative<Value>(initial: Value): Mutable<Value> {
 
   const mutable: Mutable<Value> = {
     get value(): Value {
+      if (shouldWarnInvalidAccess()) {
+        console.warn(invalidReadWarning);
+      }
       const uiValueGetter = executeOnUIRuntimeSync((sv: Mutable<Value>) => {
         return sv.value;
       });
       return uiValueGetter(mutable);
     },
     set value(newValue) {
+      if (shouldWarnInvalidAccess()) {
+        console.log('warn 2');
+        console.warn(invalidWriteWarning);
+      }
       runOnUI(() => {
         mutable.value = newValue;
       })();
@@ -124,6 +140,9 @@ function makeMutableWeb<Value>(initial: Value): Mutable<Value> {
       return value;
     },
     set value(newValue) {
+      if (shouldWarnInvalidAccess()) {
+        console.warn(invalidWriteWarning);
+      }
       valueSetter(mutable, newValue);
     },
 
