@@ -11,10 +11,9 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableNativeArray;
-import com.facebook.soloader.SoLoader;
 import com.swmansion.common.GestureHandlerStateManager;
-import com.swmansion.reanimated.AndroidUIScheduler;
 import com.swmansion.reanimated.BuildConfig;
+// import com.swmansion.BuildConfig;
 import com.swmansion.reanimated.DevMenuUtils;
 import com.swmansion.reanimated.NativeProxy;
 import com.swmansion.reanimated.NodesManager;
@@ -26,6 +25,8 @@ import com.swmansion.reanimated.layoutReanimation.AnimationsManager;
 import com.swmansion.reanimated.layoutReanimation.LayoutAnimations;
 import com.swmansion.reanimated.sensor.ReanimatedSensorContainer;
 import com.swmansion.reanimated.sensor.ReanimatedSensorType;
+import com.swmansion.worklets.AndroidUIScheduler;
+import com.swmansion.worklets.WorkletsNativeProxy;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -33,13 +34,10 @@ import java.util.Map;
 import java.util.Set;
 
 public abstract class NativeProxyCommon {
-  static {
-    SoLoader.loadLibrary("reanimated");
-  }
 
+  protected final WorkletsNativeProxy mWorkletsNativeProxy;
   protected NodesManager mNodesManager;
   protected final WeakReference<ReactApplicationContext> mContext;
-  protected AndroidUIScheduler mAndroidUIScheduler;
   private ReanimatedSensorContainer reanimatedSensorContainer;
   private final GestureHandlerStateManager gestureHandlerStateManager;
   private KeyboardAnimationManager keyboardAnimationManager;
@@ -49,7 +47,13 @@ public abstract class NativeProxyCommon {
   protected String cppVersion = null;
 
   protected NativeProxyCommon(ReactApplicationContext context) {
-    mAndroidUIScheduler = new AndroidUIScheduler(context);
+    //    mWorkletsNativeProxy =
+    //        context.getNativeModule(WorkletsModule.class).getWorkletsNativeProxy();
+    mWorkletsNativeProxy =
+        context
+            .getNativeModule(ReanimatedModule.class)
+            .getWorkletsModule()
+            .getWorkletsNativeProxy();
     mContext = new WeakReference<>(context);
     reanimatedSensorContainer = new ReanimatedSensorContainer(mContext);
     keyboardAnimationManager = new KeyboardAnimationManager(mContext);
@@ -71,7 +75,7 @@ public abstract class NativeProxyCommon {
   protected native void installJSIBindings();
 
   public AndroidUIScheduler getAndroidUIScheduler() {
-    return mAndroidUIScheduler;
+    return mWorkletsNativeProxy.getAndroidUIScheduler();
   }
 
   private void toggleSlowAnimations() {
@@ -218,7 +222,7 @@ public abstract class NativeProxyCommon {
   protected abstract HybridData getHybridData();
 
   public void invalidate() {
-    mAndroidUIScheduler.deactivate();
+    // mAndroidUIScheduler.deactivate();
   }
 
   public void prepareLayoutAnimations(LayoutAnimations layoutAnimations) {

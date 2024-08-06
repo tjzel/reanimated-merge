@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.8)
 
 file(GLOB_RECURSE WORKLETS_COMMON_SOURCES CONFIGURE_DEPENDS "${WORKLETS_COMMON_DIR}/*.cpp")
+file(GLOB_RECURSE WORKLETS_ANDROID_SOURCES CONFIGURE_DEPENDS "${WORKLETS_ANDROID_DIR}/*.cpp")
+
+# message(ERROR WORKLETS_ANDROID_SOURCES ${WORKLETS_ANDROID_SOURCES})
 
 # Consume shared libraries and headers from prefabs
 find_package(fbjni REQUIRED CONFIG)
@@ -14,6 +17,7 @@ add_library(
     worklets
     SHARED
     ${WORKLETS_COMMON_SOURCES}
+    ${WORKLETS_ANDROID_SOURCES}
 )
 
 # includes
@@ -24,12 +28,16 @@ target_include_directories(
     "${WORKLETS_COMMON_DIR}/SharedItems"
     "${WORKLETS_COMMON_DIR}/Tools"
     "${WORKLETS_COMMON_DIR}/WorkletRuntime"
+    "${WORKLETS_COMMON_DIR}/CommonModules"
+    "${WORKLETS_ANDROID_DIR}"
 )
 
 target_include_directories(
     worklets
     PRIVATE
     "${REACT_NATIVE_DIR}/ReactCommon"
+    "${REACT_NATIVE_DIR}/ReactAndroid/src/main/jni/react/turbomodule"
+    "${REACT_NATIVE_DIR}/ReactCommon/react/nativemodule/core/ReactCommon"
     "${REACT_NATIVE_DIR}/ReactCommon/callinvoker"
     "${REACT_NATIVE_DIR}/ReactCommon/runtimeexecutor"
 )
@@ -44,6 +52,8 @@ if(${IS_NEW_ARCHITECTURE_ENABLED})
 
     target_link_libraries(
         worklets
+
+        # react_nativemodule_core
         ReactAndroid::fabricjni
         ReactAndroid::react_debug
         ReactAndroid::react_render_core
@@ -63,6 +73,7 @@ set_target_properties(
 target_link_libraries(
     worklets
     log
+    ReactAndroid::react_nativemodule_core
     ReactAndroid::folly_runtime
     ReactAndroid::glog
     ReactAndroid::jsi

@@ -5,20 +5,24 @@ import static com.swmansion.reanimated.Utils.simplifyStringNumbersList;
 import com.facebook.jni.HybridData;
 import com.facebook.proguard.annotations.DoNotStrip;
 import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.queue.MessageQueueThread;
 import com.facebook.react.turbomodule.core.CallInvokerHolderImpl;
 import com.swmansion.reanimated.layoutReanimation.LayoutAnimations;
 import com.swmansion.reanimated.layoutReanimation.NativeMethodsHolder;
 import com.swmansion.reanimated.nativeProxy.NativeProxyCommon;
+import com.swmansion.worklets.ReanimatedMessageQueueThread;
+import com.swmansion.worklets.WorkletsModule;
+import com.swmansion.worklets.WorkletsNativeProxy;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
+
+// import com.swmansion.BuildConfig;
 
 public class NativeProxy extends NativeProxyCommon {
   @DoNotStrip
   @SuppressWarnings("unused")
   private final HybridData mHybridData;
 
-  public NativeProxy(ReactApplicationContext context, String valueUnpackerCode) {
+  public NativeProxy(ReactApplicationContext context, WorkletsModule workletsModule) {
     super(context);
     CallInvokerHolderImpl holder =
         (CallInvokerHolderImpl) context.getCatalystInstance().getJSCallInvokerHolder();
@@ -26,12 +30,9 @@ public class NativeProxy extends NativeProxyCommon {
     ReanimatedMessageQueueThread messageQueueThread = new ReanimatedMessageQueueThread();
     mHybridData =
         initHybrid(
+            workletsModule.getWorkletsNativeProxy(),
             context.getJavaScriptContextHolder().get(),
-            holder,
-            mAndroidUIScheduler,
-            LayoutAnimations,
-            messageQueueThread,
-            valueUnpackerCode);
+            LayoutAnimations);
     prepareLayoutAnimations(LayoutAnimations);
     installJSIBindings();
     if (BuildConfig.DEBUG) {
@@ -40,12 +41,7 @@ public class NativeProxy extends NativeProxyCommon {
   }
 
   private native HybridData initHybrid(
-      long jsContext,
-      CallInvokerHolderImpl jsCallInvokerHolder,
-      AndroidUIScheduler androidUIScheduler,
-      LayoutAnimations LayoutAnimations,
-      MessageQueueThread messageQueueThread,
-      String valueUnpackerCode);
+      WorkletsNativeProxy workletsNativeProxy, long jsContext, LayoutAnimations LayoutAnimations);
 
   public native boolean isAnyHandlerWaitingForEvent(String eventName, int emitterReactTag);
 

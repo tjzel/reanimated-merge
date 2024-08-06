@@ -14,6 +14,7 @@ import type React from 'react';
 import { getShadowNodeWrapperFromRef } from '../fabricUtils';
 import type { LayoutAnimationBatchItem } from '../layoutReanimation/animationBuilder/commonTypes';
 import ReanimatedModule from '../specs/NativeReanimatedModule';
+import WorkletsModule from '../specs/NativeWorkletsModule';
 
 // this is the type of `__reanimatedModuleProxy` which is injected using JSI
 export interface NativeReanimatedModule {
@@ -77,6 +78,7 @@ See \`https://docs.swmansion.com/react-native-reanimated/docs/guides/troubleshoo
 
 export class NativeReanimated {
   private InnerNativeModule: NativeReanimatedModule;
+  private CommonWorkletsModule: any;
 
   constructor() {
     // These checks have to split since version checking depend on the execution order
@@ -86,6 +88,10 @@ export class NativeReanimated {
     global._REANIMATED_VERSION_JS = jsVersion;
     if (global.__reanimatedModuleProxy === undefined) {
       const valueUnpackerCode = getValueUnpackerCode();
+      console.log('Installing WorkletsModule');
+      WorkletsModule?.installTurboModule(valueUnpackerCode);
+      console.log(WorkletsModule);
+      console.log('Installing ReanimatedModule');
       ReanimatedModule?.installTurboModule(valueUnpackerCode);
     }
     if (global.__reanimatedModuleProxy === undefined) {
@@ -97,6 +103,7 @@ See https://docs.swmansion.com/react-native-reanimated/docs/guides/troubleshooti
     if (__DEV__) {
       checkCppVersion();
     }
+    this.CommonWorkletsModule = (global as any).__workletsModuleProxy;
     this.InnerNativeModule = global.__reanimatedModuleProxy;
   }
 
@@ -105,7 +112,7 @@ See https://docs.swmansion.com/react-native-reanimated/docs/guides/troubleshooti
     shouldPersistRemote: boolean,
     nativeStateSource?: object
   ) {
-    return this.InnerNativeModule.makeShareableClone(
+    return this.CommonWorkletsModule.makeShareableClone(
       value,
       shouldPersistRemote,
       nativeStateSource
@@ -113,22 +120,22 @@ See https://docs.swmansion.com/react-native-reanimated/docs/guides/troubleshooti
   }
 
   scheduleOnUI<T>(shareable: ShareableRef<T>) {
-    return this.InnerNativeModule.scheduleOnUI(shareable);
+    return this.CommonWorkletsModule.scheduleOnUI(shareable);
   }
 
   executeOnUIRuntimeSync<T, R>(shareable: ShareableRef<T>): R {
-    return this.InnerNativeModule.executeOnUIRuntimeSync(shareable);
+    return this.CommonWorkletsModule.executeOnUIRuntimeSync(shareable);
   }
 
   createWorkletRuntime(name: string, initializer: ShareableRef<() => void>) {
-    return this.InnerNativeModule.createWorkletRuntime(name, initializer);
+    return this.CommonWorkletsModule.createWorkletRuntime(name, initializer);
   }
 
   scheduleOnRuntime<T>(
     workletRuntime: WorkletRuntime,
     shareableWorklet: ShareableRef<T>
   ) {
-    return this.InnerNativeModule.scheduleOnRuntime(
+    return this.CommonWorkletsModule.scheduleOnRuntime(
       workletRuntime,
       shareableWorklet
     );

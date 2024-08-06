@@ -15,6 +15,7 @@
 #import <RNReanimated/RNGestureHandlerStateManager.h>
 #import <RNReanimated/ReanimatedRuntime.h>
 #import <RNReanimated/ReanimatedSensorContainer.h>
+#import <RNReanimated/WorkletsModule.h>
 
 #ifndef NDEBUG
 #import <RNReanimated/REAScreensHelper.h>
@@ -65,25 +66,14 @@ std::shared_ptr<NativeReanimatedModule> createReanimatedModule(
 
   jsi::Runtime &rnRuntime = *reinterpret_cast<facebook::jsi::Runtime *>(reaModule.bridge.runtime);
 
-  auto jsQueue = std::make_shared<REAMessageThread>([NSRunLoop currentRunLoop], ^(NSError *error) {
-    throw error;
-  });
-
   PlatformDepMethodsHolder platformDepMethodsHolder = makePlatformDepMethodsHolder(bridge, nodesManager, reaModule);
 
-  std::shared_ptr<UIScheduler> uiScheduler = std::make_shared<REAIOSUIScheduler>();
-  std::shared_ptr<JSScheduler> jsScheduler = std::make_shared<JSScheduler>(rnRuntime, jsInvoker);
   constexpr auto isBridgeless = false;
+  WorkletsModule *workletsModule = [bridge moduleForClass:[WorkletsModule class]];
+  const std::shared_ptr<CommonWorkletsModule> commonWorkletsModule = [workletsModule getCommonWorkletsModule];
 
   auto nativeReanimatedModule = std::make_shared<NativeReanimatedModule>(
-      rnRuntime,
-      jsScheduler,
-      jsQueue,
-      uiScheduler,
-      platformDepMethodsHolder,
-      valueUnpackerCode,
-      isBridgeless,
-      getIsReducedMotion());
+      commonWorkletsModule, platformDepMethodsHolder, isBridgeless, getIsReducedMotion());
 
   commonInit(reaModule, nativeReanimatedModule);
   // Layout Animation callbacks setup

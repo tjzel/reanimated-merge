@@ -11,6 +11,8 @@ import com.facebook.react.fabric.FabricUIManager;
 import com.facebook.react.module.annotations.ReactModule;
 import com.facebook.react.uimanager.UIManagerModule;
 import com.facebook.react.uimanager.UIManagerModuleListener;
+import com.swmansion.worklets.WorkletsModule;
+// import com.swmansion.BuildConfig;
 import java.util.ArrayList;
 import javax.annotation.Nullable;
 
@@ -18,6 +20,9 @@ import javax.annotation.Nullable;
 public class ReanimatedModule extends NativeReanimatedModuleSpec
     implements LifecycleEventListener, UIManagerModuleListener, UIManagerListener {
   public static final String NAME = "ReanimatedModule";
+
+  // Currently it's impossible to register two Packages within one library
+  // the CLI expects just one, so we install Worklets Module inside this one.
 
   public void didDispatchMountItems(@NonNull UIManager uiManager) {
     // Keep: Required for UIManagerListener
@@ -60,10 +65,26 @@ public class ReanimatedModule extends NativeReanimatedModuleSpec
   }
 
   private ArrayList<UIThreadOperation> mOperations = new ArrayList<>();
+
   private @Nullable NodesManager mNodesManager;
+
+  // private final @Nullable WorkletsModule mWorkletsModule;
+  // This is a temporary binding for WorkletsModule.
+  // With the current state of RN CLI it's impossible
+  // to register more than one module within a single library.
+  private final WorkletsModule mWorkletsModule;
 
   public ReanimatedModule(ReactApplicationContext reactContext) {
     super(reactContext);
+    //    var a = reactContext.getClassLoader().
+    //    }
+    //    reactContext.getCatalystInstance().setTurboModuleRegistry();
+    //    mWorkletsModule = new WorkletsModule(reactContext);
+    mWorkletsModule = reactContext.getNativeModule(WorkletsModule.class);
+  }
+
+  public WorkletsModule getWorkletsModule() {
+    return mWorkletsModule;
   }
 
   @Override
@@ -129,7 +150,7 @@ public class ReanimatedModule extends NativeReanimatedModuleSpec
   /*package*/
   public NodesManager getNodesManager() {
     if (mNodesManager == null) {
-      mNodesManager = new NodesManager(getReactApplicationContext());
+      mNodesManager = new NodesManager(getReactApplicationContext(), mWorkletsModule);
     }
 
     return mNodesManager;
@@ -142,7 +163,7 @@ public class ReanimatedModule extends NativeReanimatedModuleSpec
     Utils.isChromeDebugger = getReactApplicationContext().getJavaScriptContextHolder().get() == 0;
 
     if (!Utils.isChromeDebugger) {
-      this.getNodesManager().initWithContext(getReactApplicationContext(), valueUnpackerCode);
+      this.getNodesManager().initWithContext(getReactApplicationContext());
       return true;
     } else {
       Log.w(
