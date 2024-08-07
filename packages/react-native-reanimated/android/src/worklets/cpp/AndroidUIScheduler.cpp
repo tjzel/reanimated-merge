@@ -12,7 +12,7 @@ namespace reanimated {
 using namespace facebook;
 using namespace react;
 
-class UISchedulerWrapper : public reanimated::UIScheduler {
+class UISchedulerWrapper : public UIScheduler {
  private:
   jni::global_ref<AndroidUIScheduler::javaobject> androidUiScheduler_;
 

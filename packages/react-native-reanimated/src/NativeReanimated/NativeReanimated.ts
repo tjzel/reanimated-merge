@@ -13,8 +13,8 @@ import { isFabric } from '../PlatformChecker';
 import type React from 'react';
 import { getShadowNodeWrapperFromRef } from '../fabricUtils';
 import type { LayoutAnimationBatchItem } from '../layoutReanimation/animationBuilder/commonTypes';
-import ReanimatedModule from '../specs/NativeReanimatedModule';
 import WorkletsModule from '../specs/NativeWorkletsModule';
+import ReanimatedModule from '../specs/NativeReanimatedModule';
 
 // this is the type of `__reanimatedModuleProxy` which is injected using JSI
 export interface NativeReanimatedModule {
@@ -78,6 +78,7 @@ See \`https://docs.swmansion.com/react-native-reanimated/docs/guides/troubleshoo
 
 export class NativeReanimated {
   private InnerNativeModule: NativeReanimatedModule;
+  // TODO: Add proper types.
   private CommonWorkletsModule: any;
 
   constructor() {
@@ -88,11 +89,8 @@ export class NativeReanimated {
     global._REANIMATED_VERSION_JS = jsVersion;
     if (global.__reanimatedModuleProxy === undefined) {
       const valueUnpackerCode = getValueUnpackerCode();
-      console.log('Installing WorkletsModule');
       WorkletsModule?.installTurboModule(valueUnpackerCode);
-      console.log(WorkletsModule);
-      console.log('Installing ReanimatedModule');
-      ReanimatedModule?.installTurboModule(valueUnpackerCode);
+      ReanimatedModule?.installTurboModule();
     }
     if (global.__reanimatedModuleProxy === undefined) {
       throw new Error(

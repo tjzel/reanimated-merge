@@ -1,5 +1,3 @@
-#include "CommonWorkletsModule.h"
-
 #ifdef RCT_NEW_ARCH_ENABLED
 #include <react/renderer/uimanager/UIManagerBinding.h>
 #include <react/renderer/uimanager/primitives.h>
@@ -23,6 +21,7 @@
 #include "AsyncQueue.h"
 #include "CollectionUtils.h"
 #include "EventHandlerRegistry.h"
+#include "RNRuntimeWorkletDecorator.h"
 #include "Shareables.h"
 #include "WorkletEventHandler.h"
 
@@ -65,12 +64,12 @@ CommonWorkletsModule::CommonWorkletsModule(
           valueUnpackerCode)),
       valueUnpackerCode_(valueUnpackerCode),
       jsLogger_(std::make_shared<JSLogger>(jsScheduler_)) {
-  commonInit();
+  commonInit(rnRuntime);
 }
 
-void CommonWorkletsModule::commonInit() {
-  // TODO: implement
-  // UIRuntimeDecorator::decorate;
+void CommonWorkletsModule::commonInit(jsi::Runtime &rnRuntime) {
+  RNRuntimeWorkletDecorator::decorate(
+      rnRuntime, std::shared_ptr<CommonWorkletsModule>(this));
 }
 
 CommonWorkletsModule::~CommonWorkletsModule() {

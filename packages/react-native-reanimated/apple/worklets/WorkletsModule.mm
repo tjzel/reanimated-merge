@@ -1,12 +1,6 @@
 #import <React/RCTBridge+Private.h>
 
 #ifdef RCT_NEW_ARCH_ENABLED
-#import <React/RCTFabricSurface.h>
-#import <React/RCTScheduler.h>
-#import <React/RCTSurface.h>
-#import <React/RCTSurfacePresenter.h>
-#import <React/RCTSurfacePresenterBridgeAdapter.h>
-#import <React/RCTSurfaceView.h>
 #if REACT_NATIVE_MINOR_VERSION < 73
 #import <React/RCTRuntimeExecutorFromBridge.h>
 #endif // REACT_NATIVE_MINOR_VERSION < 73
@@ -92,15 +86,6 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(installTurboModule : (nonnull NSString *)
   });
   constexpr auto isBridgeless = false;
   constexpr auto isReducedMotion = false;
-
-  //  CommonWorkletsModule(
-  //      jsi::Runtime &rnRuntime,
-  //      const std::shared_ptr<JSScheduler> &jsScheduler,
-  //      const std::shared_ptr<MessageQueueThread> &jsQueue,
-  //      const std::shared_ptr<UIScheduler> &uiScheduler,
-  //      const std::string &valueUnpackerCode,
-  //      const bool isBridgeless,
-  //                       const bool isReducedMotion);
 
   commonWorkletsModule_ = std::make_shared<CommonWorkletsModule>(
       rnRuntime,

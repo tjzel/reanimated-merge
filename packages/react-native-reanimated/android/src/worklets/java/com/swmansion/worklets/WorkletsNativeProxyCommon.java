@@ -10,40 +10,14 @@ import java.lang.ref.WeakReference;
 public abstract class WorkletsNativeProxyCommon {
   static {
     SoLoader.loadLibrary("worklets");
-    //    SoLoader.loadLibrary("reanimated");
   }
 
-  // protected NodesManager mNodesManager;
   protected final WeakReference<ReactApplicationContext> mContext;
   protected AndroidUIScheduler mAndroidUIScheduler;
-  // private ReanimatedSensorContainer reanimatedSensorContainer;
-  // private final GestureHandlerStateManager gestureHandlerStateManager;
-  // private KeyboardAnimationManager keyboardAnimationManager;
-  // private Long firstUptime = SystemClock.uptimeMillis();
-  // private boolean slowAnimationsEnabled = false;
-  // private final int ANIMATIONS_DRAG_FACTOR = 10;
-  // protected String cppVersion = null;
 
   protected WorkletsNativeProxyCommon(ReactApplicationContext context) {
     mAndroidUIScheduler = new AndroidUIScheduler(context);
     mContext = new WeakReference<>(context);
-
-    // reanimatedSensorContainer = new ReanimatedSensorContainer(mContext);
-    // keyboardAnimationManager = new KeyboardAnimationManager(mContext);
-    // addDevMenuOption();
-
-    // GestureHandlerStateManager tempHandlerStateManager;
-    // try {
-    //   Class<NativeModule> gestureHandlerModuleClass =
-    //       (Class<NativeModule>)Class.forName(
-    //           "com.swmansion.gesturehandler.react.RNGestureHandlerModule");
-    //   tempHandlerStateManager =
-    //       (GestureHandlerStateManager)context.getNativeModule(
-    //           gestureHandlerModuleClass);
-    // } catch (ClassCastException | ClassNotFoundException e) {
-    //   tempHandlerStateManager = null;
-    // }
-    // gestureHandlerStateManager = tempHandlerStateManager;
   }
 
   protected native void installJSIBindings();
@@ -52,187 +26,14 @@ public abstract class WorkletsNativeProxyCommon {
     return mAndroidUIScheduler;
   }
 
-  // private void toggleSlowAnimations() {
-  //   slowAnimationsEnabled = !slowAnimationsEnabled;
-  //   if (slowAnimationsEnabled) {
-  //     firstUptime = SystemClock.uptimeMillis();
-  //   }
-  //   mNodesManager.enableSlowAnimations(
-  //       slowAnimationsEnabled, ANIMATIONS_DRAG_FACTOR);
-  // }
-
-  // private void addDevMenuOption() {
-  //   // In Expo, `ApplicationContext` is not an instance of `ReactApplication`
-  //   DevMenuUtils.addDevMenuOption(mContext.get(),
-  //   this::toggleSlowAnimations);
-  // }
-
-  // @DoNotStrip
-  // public void requestRender(AnimationFrameCallback callback) {
-  //   mNodesManager.postOnAnimation(callback);
-  // }
-
-  // @DoNotStrip
-  // public String getReanimatedJavaVersion() {
-  //   return BuildConfig.REANIMATED_VERSION_JAVA;
-  // }
-
-  // @DoNotStrip
-  // @SuppressWarnings("unused")
-  // // It turns out it's pretty difficult to set a member of a class
-  // // instance through JNI so we decided to use a setter instead.
-  // protected void setCppVersion(String version) {
-  //   cppVersion = version;
-  // }
-
-  // protected void checkCppVersion() {
-  //   if (cppVersion == null) {
-  //     throw new RuntimeException(
-  //         "[Reanimated] Java side failed to resolve C++ code version. "
-  //         +
-  //         "See
-  //
-  // https://docs.swmansion.com/react-native-reanimated/docs/guides/troubleshooting#java-side-failed-to-resolve-c-code-version
-  //         for more information.");
-  //   }
-  //   String javaVersion = getReanimatedJavaVersion();
-  //   if (!cppVersion.equals(javaVersion)) {
-  //     throw new RuntimeException(
-  //         "[Reanimated] Mismatch between Java code version and C++ code
-  //         version (" + javaVersion + " vs. " + cppVersion + " respectively).
-  //         See "
-  //         +
-  //
-  // "https://docs.swmansion.com/react-native-reanimated/docs/guides/troubleshooting#mismatch-between-java-code-version-and-c-code-version
-  //         for more information.");
-  //   }
-  // }
-
-  // @DoNotStrip
-  // public void updateProps(int viewTag, Map<String, Object> props) {
-  //   mNodesManager.updateProps(viewTag, props);
-  // }
-
-  // @DoNotStrip
-  // public void synchronouslyUpdateUIProps(int viewTag, ReadableMap uiProps) {
-  //   mNodesManager.synchronouslyUpdateUIProps(viewTag, uiProps);
-  // }
-
-  // @DoNotStrip
-  // public String obtainProp(int viewTag, String propName) {
-  //   return mNodesManager.obtainProp(viewTag, propName);
-  // }
-
-  // @DoNotStrip
-  // public void scrollTo(int viewTag, double x, double y, boolean animated) {
-  //   mNodesManager.scrollTo(viewTag, x, y, animated);
-  // }
-
-  // @DoNotStrip
-  // public void
-  // dispatchCommand(int viewTag, String commandId, ReadableArray commandArgs) {
-  //   mNodesManager.dispatchCommand(viewTag, commandId, commandArgs);
-  // }
-
-  // @DoNotStrip
-  // public void setGestureState(int handlerTag, int newState) {
-  //   if (gestureHandlerStateManager != null) {
-  //     gestureHandlerStateManager.setGestureHandlerState(handlerTag,
-  //     newState);
-  //   }
-  // }
-
-  // @DoNotStrip
-  // public long getAnimationTimestamp() {
-  //   if (slowAnimationsEnabled) {
-  //     return this.firstUptime +
-  //         (SystemClock.uptimeMillis() - this.firstUptime) /
-  //         ANIMATIONS_DRAG_FACTOR;
-  //   } else {
-  //     return SystemClock.uptimeMillis();
-  //   }
-  // }
-
-  // @DoNotStrip
-  // public float[] measure(int viewTag) {
-  //   return mNodesManager.measure(viewTag);
-  // }
-
-  // @DoNotStrip
-  // public void configureProps(
-  //     ReadableNativeArray uiProps,
-  //     ReadableNativeArray nativeProps) {
-  //   Set<String> uiPropsSet = convertProps(uiProps);
-  //   Set<String> nativePropsSet = convertProps(nativeProps);
-  //   mNodesManager.configureProps(uiPropsSet, nativePropsSet);
-  // }
-
-  // private Set<String> convertProps(ReadableNativeArray props) {
-  //   Set<String> propsSet = new HashSet<>();
-  //   ArrayList<Object> propsList = props.toArrayList();
-  //   for (int i = 0; i < propsList.size(); i++) {
-  //     propsSet.add((String)propsList.get(i));
-  //   }
-  //   return propsSet;
-  // }
-
-  // @DoNotStrip
-  // public void registerEventHandler(EventHandler handler) {
-  //   handler.mCustomEventNamesResolver = mNodesManager.getEventNameResolver();
-  //   mNodesManager.registerEventHandler(handler);
-  // }
-
-  // @DoNotStrip
-  // public int registerSensor(int sensorType, int interval, SensorSetter
-  // setter) {
-  //   return reanimatedSensorContainer.registerSensor(
-  //       ReanimatedSensorType.getInstanceById(sensorType), interval, setter);
-  // }
-
-  // @DoNotStrip
-  // public void unregisterSensor(int sensorId) {
-  //   reanimatedSensorContainer.unregisterSensor(sensorId);
-  // }
-
-  // @DoNotStrip
-  // public int subscribeForKeyboardEvents(
-  //     KeyboardWorkletWrapper keyboardWorkletWrapper,
-  //     boolean isStatusBarTranslucent) {
-  //   return keyboardAnimationManager.subscribeForKeyboardUpdates(
-  //       keyboardWorkletWrapper, isStatusBarTranslucent);
-  // }
-
-  // @DoNotStrip
-  // public void unsubscribeFromKeyboardEvents(int listenerId) {
-  //   keyboardAnimationManager.unsubscribeFromKeyboardUpdates(listenerId);
-  // }
-
+  /**
+   * @noinspection unused
+   */
   protected abstract HybridData getHybridData();
 
   public void invalidate() {
     mAndroidUIScheduler.deactivate();
   }
-
-  // public void prepareLayoutAnimations(LayoutAnimations layoutAnimations) {
-  //   if (Utils.isChromeDebugger) {
-  //     Log.w(
-  //         "[REANIMATED]",
-  //         "You can not use LayoutAnimation with enabled Chrome Debugger");
-  //     return;
-  //   }
-  //   mNodesManager = mContext.get()
-  //                       .getNativeModule(ReanimatedModule.class)
-  //                       .getNodesManager();
-
-  //   AnimationsManager animationsManager =
-  //       mContext.get()
-  //           .getNativeModule(ReanimatedModule.class)
-  //           .getNodesManager()
-  //           .getAnimationsManager();
-
-  //   animationsManager.setNativeMethods(
-  //       NativeProxy.createNativeMethodsHolder(layoutAnimations));
-  // }
 
   // @DoNotStrip
   public boolean getIsReducedMotion() {
@@ -242,11 +43,4 @@ public abstract class WorkletsNativeProxyCommon {
     float parsedValue = rawValue != null ? Float.parseFloat(rawValue) : 1f;
     return parsedValue == 0f;
   }
-
-  // @DoNotStrip
-  // void maybeFlushUIUpdatesQueue() {
-  //   if (!mNodesManager.isAnimationRunning()) {
-  //     mNodesManager.performOperations();
-  //   }
-  // }
 }

@@ -13,7 +13,6 @@ import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableNativeArray;
 import com.swmansion.common.GestureHandlerStateManager;
 import com.swmansion.reanimated.BuildConfig;
-// import com.swmansion.BuildConfig;
 import com.swmansion.reanimated.DevMenuUtils;
 import com.swmansion.reanimated.NativeProxy;
 import com.swmansion.reanimated.NodesManager;
@@ -25,33 +24,33 @@ import com.swmansion.reanimated.layoutReanimation.AnimationsManager;
 import com.swmansion.reanimated.layoutReanimation.LayoutAnimations;
 import com.swmansion.reanimated.sensor.ReanimatedSensorContainer;
 import com.swmansion.reanimated.sensor.ReanimatedSensorType;
-import com.swmansion.worklets.AndroidUIScheduler;
 import com.swmansion.worklets.WorkletsNativeProxy;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
+/**
+ * @noinspection JavaJniMissingFunction
+ */
 public abstract class NativeProxyCommon {
 
   protected final WorkletsNativeProxy mWorkletsNativeProxy;
   protected NodesManager mNodesManager;
   protected final WeakReference<ReactApplicationContext> mContext;
-  private ReanimatedSensorContainer reanimatedSensorContainer;
+  private final ReanimatedSensorContainer reanimatedSensorContainer;
   private final GestureHandlerStateManager gestureHandlerStateManager;
-  private KeyboardAnimationManager keyboardAnimationManager;
+  private final KeyboardAnimationManager keyboardAnimationManager;
   private Long firstUptime = SystemClock.uptimeMillis();
   private boolean slowAnimationsEnabled = false;
   private final int ANIMATIONS_DRAG_FACTOR = 10;
   protected String cppVersion = null;
 
   protected NativeProxyCommon(ReactApplicationContext context) {
-    //    mWorkletsNativeProxy =
-    //        context.getNativeModule(WorkletsModule.class).getWorkletsNativeProxy();
     mWorkletsNativeProxy =
-        context
-            .getNativeModule(ReanimatedModule.class)
+        Objects.requireNonNull(context.getNativeModule(ReanimatedModule.class))
             .getWorkletsModule()
             .getWorkletsNativeProxy();
     mContext = new WeakReference<>(context);
@@ -73,10 +72,6 @@ public abstract class NativeProxyCommon {
   }
 
   protected native void installJSIBindings();
-
-  public AndroidUIScheduler getAndroidUIScheduler() {
-    return mWorkletsNativeProxy.getAndroidUIScheduler();
-  }
 
   private void toggleSlowAnimations() {
     slowAnimationsEnabled = !slowAnimationsEnabled;
@@ -219,10 +214,13 @@ public abstract class NativeProxyCommon {
     keyboardAnimationManager.unsubscribeFromKeyboardUpdates(listenerId);
   }
 
+  /**
+   * @noinspection unused
+   */
   protected abstract HybridData getHybridData();
 
   public void invalidate() {
-    // mAndroidUIScheduler.deactivate();
+    // Do nothing.
   }
 
   public void prepareLayoutAnimations(LayoutAnimations layoutAnimations) {
@@ -230,12 +228,12 @@ public abstract class NativeProxyCommon {
       Log.w("[REANIMATED]", "You can not use LayoutAnimation with enabled Chrome Debugger");
       return;
     }
-    mNodesManager = mContext.get().getNativeModule(ReanimatedModule.class).getNodesManager();
+    mNodesManager =
+        Objects.requireNonNull(mContext.get().getNativeModule(ReanimatedModule.class))
+            .getNodesManager();
 
     AnimationsManager animationsManager =
-        mContext
-            .get()
-            .getNativeModule(ReanimatedModule.class)
+        Objects.requireNonNull(mContext.get().getNativeModule(ReanimatedModule.class))
             .getNodesManager()
             .getAnimationsManager();
 

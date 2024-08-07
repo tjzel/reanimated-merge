@@ -12,17 +12,13 @@ import com.facebook.react.module.annotations.ReactModule;
 import com.facebook.react.uimanager.UIManagerModule;
 import com.facebook.react.uimanager.UIManagerModuleListener;
 import com.swmansion.worklets.WorkletsModule;
-// import com.swmansion.BuildConfig;
 import java.util.ArrayList;
+import java.util.Objects;
 import javax.annotation.Nullable;
 
 @ReactModule(name = ReanimatedModule.NAME)
 public class ReanimatedModule extends NativeReanimatedModuleSpec
     implements LifecycleEventListener, UIManagerModuleListener, UIManagerListener {
-  public static final String NAME = "ReanimatedModule";
-
-  // Currently it's impossible to register two Packages within one library
-  // the CLI expects just one, so we install Worklets Module inside this one.
 
   public void didDispatchMountItems(@NonNull UIManager uiManager) {
     // Keep: Required for UIManagerListener
@@ -68,18 +64,10 @@ public class ReanimatedModule extends NativeReanimatedModuleSpec
 
   private @Nullable NodesManager mNodesManager;
 
-  // private final @Nullable WorkletsModule mWorkletsModule;
-  // This is a temporary binding for WorkletsModule.
-  // With the current state of RN CLI it's impossible
-  // to register more than one module within a single library.
   private final WorkletsModule mWorkletsModule;
 
   public ReanimatedModule(ReactApplicationContext reactContext) {
     super(reactContext);
-    //    var a = reactContext.getClassLoader().
-    //    }
-    //    reactContext.getCatalystInstance().setTurboModuleRegistry();
-    //    mWorkletsModule = new WorkletsModule(reactContext);
     mWorkletsModule = reactContext.getNativeModule(WorkletsModule.class);
   }
 
@@ -100,6 +88,7 @@ public class ReanimatedModule extends NativeReanimatedModuleSpec
       }
     } else {
       UIManagerModule uiManager = reactCtx.getNativeModule(UIManagerModule.class);
+      assert uiManager != null;
       uiManager.addUIManagerListener(this);
     }
     reactCtx.addLifecycleEventListener(this);
@@ -142,11 +131,6 @@ public class ReanimatedModule extends NativeReanimatedModuleSpec
         });
   }
 
-  @Override
-  public String getName() {
-    return NAME;
-  }
-
   /*package*/
   public NodesManager getNodesManager() {
     if (mNodesManager == null) {
@@ -157,10 +141,12 @@ public class ReanimatedModule extends NativeReanimatedModuleSpec
   }
 
   @ReactMethod(isBlockingSynchronousMethod = true)
-  public boolean installTurboModule(String valueUnpackerCode) {
+  public boolean installTurboModule() {
     // When debugging in chrome the JS context is not available.
     // https://github.com/facebook/react-native/blob/v0.67.0-rc.6/ReactAndroid/src/main/java/com/facebook/react/modules/blob/BlobCollector.java#L25
-    Utils.isChromeDebugger = getReactApplicationContext().getJavaScriptContextHolder().get() == 0;
+    Utils.isChromeDebugger =
+        Objects.requireNonNull(getReactApplicationContext().getJavaScriptContextHolder()).get()
+            == 0;
 
     if (!Utils.isChromeDebugger) {
       this.getNodesManager().initWithContext(getReactApplicationContext());
@@ -174,12 +160,12 @@ public class ReanimatedModule extends NativeReanimatedModuleSpec
   }
 
   @ReactMethod
-  public void addListener(String eventName) {
+  public void addListener(String ignoredEventName) {
     // Keep: Required for RN built in Event Emitter Calls.
   }
 
   @ReactMethod
-  public void removeListeners(Integer count) {
+  public void removeListeners(Integer ignoredCount) {
     // Keep: Required for RN built in Event Emitter Calls.
   }
 

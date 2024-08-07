@@ -83,7 +83,7 @@ class CommonWorkletsModule : public CommonWorkletsModuleSpec {
   }
 
  private:
-  void commonInit();
+  void commonInit(jsi::Runtime &rnRuntime);
 
   const bool isBridgeless_;
   const bool isReducedMotion_;

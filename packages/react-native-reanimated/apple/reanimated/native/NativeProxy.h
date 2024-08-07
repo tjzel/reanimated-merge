@@ -16,8 +16,7 @@ static inline bool getIsReducedMotion();
 std::shared_ptr<reanimated::NativeReanimatedModule> createReanimatedModule(
     REAModule *reaModule,
     RCTBridge *bridge,
-    const std::shared_ptr<facebook::react::CallInvoker> &jsInvoker,
-    const std::string &valueUnpackerCode);
+    const std::shared_ptr<facebook::react::CallInvoker> &jsInvoker);
 
 #if REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED)
 std::shared_ptr<reanimated::NativeReanimatedModule>

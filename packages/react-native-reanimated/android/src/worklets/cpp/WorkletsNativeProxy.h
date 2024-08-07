@@ -13,7 +13,6 @@
 #include <jsi/jsi.h>
 #include <react/jni/CxxModuleWrapper.h>
 #include <react/jni/JMessageQueueThread.h>
-// #include <react/jni/JavaScriptExecutorHolder.h>
 #include <react/jni/WritableNativeMap.h>
 
 #include <memory>
@@ -42,7 +41,6 @@ class WorkletsNativeProxy : public jni::HybridClass<WorkletsNativeProxy> {
       jni::alias_ref<facebook::react::CallInvokerHolder::javaobject>
           jsCallInvokerHolder,
       jni::alias_ref<AndroidUIScheduler::javaobject> androidUiScheduler,
-      // jni::alias_ref<LayoutAnimations::javaobject> layoutAnimations,
       jni::alias_ref<JavaMessageQueueThread::javaobject> messageQueueThread,
 #ifdef RCT_NEW_ARCH_ENABLED
       jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
@@ -69,13 +67,10 @@ class WorkletsNativeProxy : public jni::HybridClass<WorkletsNativeProxy> {
     return commonWorkletsModule_;
   }
 
-  ~WorkletsNativeProxy();
-
  private:
   friend HybridBase;
   jni::global_ref<WorkletsNativeProxy::javaobject> javaPart_;
   jsi::Runtime *rnRuntime_;
-  // std::shared_ptr<NativeReanimatedModule> nativeReanimatedModule_;
   std::shared_ptr<reanimated::CommonWorkletsModule> commonWorkletsModule_;
 #ifndef NDEBUG
   void checkJavaVersion(jsi::Runtime &);
@@ -116,7 +111,6 @@ class WorkletsNativeProxy : public jni::HybridClass<WorkletsNativeProxy> {
       jsi::Runtime *rnRuntime,
       const std::shared_ptr<facebook::react::CallInvoker> &jsCallInvoker,
       const std::shared_ptr<reanimated::UIScheduler> &uiScheduler,
-      // jni::global_ref<LayoutAnimations::javaobject> layoutAnimations,
       jni::alias_ref<JavaMessageQueueThread::javaobject> messageQueueThread,
 #ifdef RCT_NEW_ARCH_ENABLED
       jni::alias_ref<facebook::react::JFabricUIManager::javaobject>

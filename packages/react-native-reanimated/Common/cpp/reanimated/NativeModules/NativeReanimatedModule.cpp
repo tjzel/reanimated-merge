@@ -44,12 +44,7 @@ namespace reanimated {
 
 NativeReanimatedModule::NativeReanimatedModule(
     const std::shared_ptr<CommonWorkletsModule> &commonWorkletsModule,
-    //    jsi::Runtime &rnRuntime,
-    //    const std::shared_ptr<JSScheduler> &jsScheduler,
-    //    const std::shared_ptr<MessageQueueThread> &jsQueue,
-    //    const std::shared_ptr<UIScheduler> &uiScheduler,
     const PlatformDepMethodsHolder &platformDepMethodsHolder,
-    //    const std::string &valueUnpackerCode,
     const bool isBridgeless,
     const bool isReducedMotion)
     : NativeReanimatedModuleSpec(
@@ -57,17 +52,6 @@ NativeReanimatedModule::NativeReanimatedModule(
       isBridgeless_(isBridgeless),
       isReducedMotion_(isReducedMotion),
       commonWorkletsModule_(commonWorkletsModule),
-      //      jsQueue_(jsQueue),
-      //      jsScheduler_(jsScheduler),
-      //      uiScheduler_(uiScheduler),
-      //      uiWorkletRuntime_(std::make_shared<WorkletRuntime>(
-      //          rnRuntime,
-      //          jsQueue,
-      //          jsScheduler_,
-      //          "Reanimated UI runtime",
-      //          true /* supportsLocking */,
-      //          valueUnpackerCode)),
-      //      valueUnpackerCode_(valueUnpackerCode),
       eventHandlerRegistry_(std::make_unique<EventHandlerRegistry>()),
       requestRender_(platformDepMethodsHolder.requestRender),
       onRenderCallback_([this](const double timestampMs) {
@@ -75,7 +59,7 @@ NativeReanimatedModule::NativeReanimatedModule(
         onRender(timestampMs);
       }),
       animatedSensorModule_(platformDepMethodsHolder),
-      //      jsLogger_(std::make_shared<JSLogger>(jsScheduler_)),
+
       layoutAnimationsManager_(std::make_shared<LayoutAnimationsManager>(
           commonWorkletsModule_->getJSLogger())),
 #ifdef RCT_NEW_ARCH_ENABLED

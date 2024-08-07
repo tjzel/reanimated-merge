@@ -3,8 +3,6 @@ cmake_minimum_required(VERSION 3.8)
 file(GLOB_RECURSE WORKLETS_COMMON_SOURCES CONFIGURE_DEPENDS "${WORKLETS_COMMON_DIR}/*.cpp")
 file(GLOB_RECURSE WORKLETS_ANDROID_SOURCES CONFIGURE_DEPENDS "${WORKLETS_ANDROID_DIR}/*.cpp")
 
-# message(ERROR WORKLETS_ANDROID_SOURCES ${WORKLETS_ANDROID_SOURCES})
-
 # Consume shared libraries and headers from prefabs
 find_package(fbjni REQUIRED CONFIG)
 find_package(ReactAndroid REQUIRED CONFIG)
@@ -52,8 +50,6 @@ if(${IS_NEW_ARCHITECTURE_ENABLED})
 
     target_link_libraries(
         worklets
-
-        # react_nativemodule_core
         ReactAndroid::fabricjni
         ReactAndroid::react_debug
         ReactAndroid::react_render_core

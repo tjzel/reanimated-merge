@@ -31,7 +31,8 @@ target_include_directories(
     reanimated
     PRIVATE
     "${WORKLETS_COMMON_DIR}/CommonModules"
-    "${WORKLETS_ANDROID_DIR}" # is it needed?
+
+    # "${WORKLETS_ANDROID_DIR}" # is it needed?
 )
 
 target_include_directories(

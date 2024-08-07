@@ -5,18 +5,18 @@ import static com.swmansion.reanimated.Utils.simplifyStringNumbersList;
 import com.facebook.jni.HybridData;
 import com.facebook.proguard.annotations.DoNotStrip;
 import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.turbomodule.core.CallInvokerHolderImpl;
 import com.swmansion.reanimated.layoutReanimation.LayoutAnimations;
 import com.swmansion.reanimated.layoutReanimation.NativeMethodsHolder;
 import com.swmansion.reanimated.nativeProxy.NativeProxyCommon;
-import com.swmansion.worklets.ReanimatedMessageQueueThread;
 import com.swmansion.worklets.WorkletsModule;
 import com.swmansion.worklets.WorkletsNativeProxy;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
+import java.util.Objects;
 
-// import com.swmansion.BuildConfig;
-
+/**
+ * @noinspection JavaJniMissingFunction
+ */
 public class NativeProxy extends NativeProxyCommon {
   @DoNotStrip
   @SuppressWarnings("unused")
@@ -24,14 +24,11 @@ public class NativeProxy extends NativeProxyCommon {
 
   public NativeProxy(ReactApplicationContext context, WorkletsModule workletsModule) {
     super(context);
-    CallInvokerHolderImpl holder =
-        (CallInvokerHolderImpl) context.getCatalystInstance().getJSCallInvokerHolder();
     LayoutAnimations LayoutAnimations = new LayoutAnimations(context);
-    ReanimatedMessageQueueThread messageQueueThread = new ReanimatedMessageQueueThread();
     mHybridData =
         initHybrid(
             workletsModule.getWorkletsNativeProxy(),
-            context.getJavaScriptContextHolder().get(),
+            Objects.requireNonNull(context.getJavaScriptContextHolder()).get(),
             LayoutAnimations);
     prepareLayoutAnimations(LayoutAnimations);
     installJSIBindings();

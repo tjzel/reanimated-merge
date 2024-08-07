@@ -56,15 +56,10 @@ static inline bool getIsReducedMotion()
   return isReducedMotion;
 }
 
-std::shared_ptr<NativeReanimatedModule> createReanimatedModule(
-    REAModule *reaModule,
-    RCTBridge *bridge,
-    const std::shared_ptr<CallInvoker> &jsInvoker,
-    const std::string &valueUnpackerCode)
+std::shared_ptr<NativeReanimatedModule>
+createReanimatedModule(REAModule *reaModule, RCTBridge *bridge, const std::shared_ptr<CallInvoker> &jsInvoker)
 {
   auto nodesManager = reaModule.nodesManager;
-
-  jsi::Runtime &rnRuntime = *reinterpret_cast<facebook::jsi::Runtime *>(reaModule.bridge.runtime);
 
   PlatformDepMethodsHolder platformDepMethodsHolder = makePlatformDepMethodsHolder(bridge, nodesManager, reaModule);
 
