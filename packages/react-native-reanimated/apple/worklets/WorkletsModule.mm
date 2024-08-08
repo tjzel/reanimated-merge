@@ -32,10 +32,10 @@ using namespace reanimated;
 - (void *)runtime;
 @end
 
-@interface RCTBridge (RCTTurboModule)
-- (std::shared_ptr<facebook::react::CallInvoker>)jsCallInvoker;
-- (void)_tryAndHandleError:(dispatch_block_t)block;
-@end
+//@interface RCTBridge (RCTTurboModule)
+//- (std::shared_ptr<facebook::react::CallInvoker>)jsCallInvoker;
+//- (void)_tryAndHandleError:(dispatch_block_t)block;
+//@end
 
 @implementation WorkletsModule {
 #ifndef NDEBUG
@@ -70,21 +70,32 @@ RCT_EXPORT_MODULE(WorkletsModule);
 - (void)setBridge:(RCTBridge *)bridge
 {
   [super setBridge:bridge];
+#if REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED)
+  _isBridgeless = true;
+#else
+  _isBridgeless = false;
+#endif // REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED)
 }
 
 RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(installTurboModule : (nonnull NSString *)valueUnpackerCode)
 {
+#if REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED)
+  RCTCxxBridge *cxxBridge = (RCTCxxBridge *)self.bridge;
+  auto &rnRuntime = *(jsi::Runtime *)cxxBridge.runtime;
+#else
   facebook::jsi::Runtime *jsiRuntime = [self.bridge respondsToSelector:@selector(runtime)]
       ? reinterpret_cast<facebook::jsi::Runtime *>(self.bridge.runtime)
       : nullptr;
-  jsi::Runtime &rnRuntime = *jsiRuntime;
+  auto &rnRuntime = *jsiRuntime;
+#endif // REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED)
 
   std::shared_ptr<UIScheduler> uiScheduler = std::make_shared<REAIOSUIScheduler>();
   std::shared_ptr<JSScheduler> jsScheduler = std::make_shared<JSScheduler>(rnRuntime, self.bridge.jsCallInvoker);
   auto jsQueue = std::make_shared<REAMessageThread>([NSRunLoop currentRunLoop], ^(NSError *error) {
     throw error;
   });
-  constexpr auto isBridgeless = false;
+
+  // TODO: FIX IT
   constexpr auto isReducedMotion = false;
 
   commonWorkletsModule_ = std::make_shared<CommonWorkletsModule>(
@@ -93,7 +104,7 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(installTurboModule : (nonnull NSString *)
       jsQueue,
       uiScheduler,
       std::string([valueUnpackerCode UTF8String]),
-      isBridgeless,
+      _isBridgeless,
       isReducedMotion);
 
   return @YES;

@@ -275,8 +275,8 @@ jsi::Value NativeReanimatedModule::getViewProp(
   const auto funPtr = std::make_shared<jsi::Function>(
       callback.getObject(rnRuntime).asFunction(rnRuntime));
   const auto shadowNode = shadowNodeFromValue(rnRuntime, shadowNodeWrapper);
-  uiScheduler_->scheduleOnUI([=]() {
-    jsi::Runtime &uiRuntime = uiWorkletRuntime_->getJSIRuntime();
+  commonWorkletsModule_->getUIScheduler()->scheduleOnUI([=]() {
+    jsi::Runtime &uiRuntime = commonWorkletsModule_->getUIRuntime();
     const auto resultStr =
         obtainPropFromShadowNode(uiRuntime, propNameStr, shadowNode);
 
@@ -530,7 +530,7 @@ bool NativeReanimatedModule::handleRawEvent(
   if (eventType.rfind("top", 0) == 0) {
     eventType = "on" + eventType.substr(3);
   }
-  jsi::Runtime &rt = uiWorkletRuntime_->getJSIRuntime();
+  jsi::Runtime &rt = commonWorkletsModule_->getUIRuntime();
 #if REACT_NATIVE_MINOR_VERSION >= 73
   const auto &eventPayload = rawEvent.eventPayload;
   jsi::Value payload = eventPayload->asJSIValue(rt);
@@ -575,7 +575,7 @@ void NativeReanimatedModule::performOperations() {
   auto copiedOperationsQueue = std::move(operationsInBatch_);
   operationsInBatch_.clear();
 
-  jsi::Runtime &rt = uiWorkletRuntime_->getJSIRuntime();
+  jsi::Runtime &rt = commonWorkletsModule_->getUIRuntime();
 
   {
     auto lock = propsRegistry_->createLock();
@@ -718,7 +718,7 @@ jsi::String NativeReanimatedModule::obtainProp(
     jsi::Runtime &rt,
     const jsi::Value &shadowNodeWrapper,
     const jsi::Value &propName) {
-  jsi::Runtime &uiRuntime = uiWorkletRuntime_->getJSIRuntime();
+  jsi::Runtime &uiRuntime = commonWorkletsModule_->getUIRuntime();
   const auto propNameStr = propName.asString(rt).utf8(rt);
   const auto shadowNode = shadowNodeFromValue(rt, shadowNodeWrapper);
   const auto resultStr =
@@ -794,8 +794,8 @@ void NativeReanimatedModule::initializeLayoutAnimations() {
         layoutAnimationsManager_,
         componentDescriptorRegistry,
         scheduler->getContextContainer(),
-        uiWorkletRuntime_->getJSIRuntime(),
-        uiScheduler_);
+        commonWorkletsModule_->getUIRuntime(),
+        commonWorkletsModule_->getUIScheduler());
     uiManager_->getShadowTreeRegistry().enumerate(
         [this](const ShadowTree &shadowTree, bool &stop) {
           shadowTree.getMountingCoordinator()->setMountingOverrideDelegate(

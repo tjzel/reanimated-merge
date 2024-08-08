@@ -19,9 +19,9 @@ using namespace reanimated;
 
 @interface WorkletsModule : RCTEventEmitter <RCTBridgeModule>
 
-#ifdef RCT_NEW_ARCH_ENABLED
-- (void)installReanimatedAfterReload;
-#endif // RCT_NEW_ARCH_ENABLED
+// #ifdef RCT_NEW_ARCH_ENABLED
+//- (void)installReanimatedAfterReload;
+// #endif // RCT_NEW_ARCH_ENABLED
 
 - (std::shared_ptr<CommonWorkletsModule>)getCommonWorkletsModule;
 
