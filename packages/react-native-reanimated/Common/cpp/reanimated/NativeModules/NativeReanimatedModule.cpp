@@ -24,7 +24,7 @@
 #include "CollectionUtils.h"
 #include "EventHandlerRegistry.h"
 #include "FeaturesConfig.h"
-#include "REAWorkletRuntimeDecorator.h"
+#include "ReanimatedWorkletRuntimeDecorator.h"
 #include "Shareables.h"
 #include "UIRuntimeDecorator.h"
 #include "WorkletEventHandler.h"

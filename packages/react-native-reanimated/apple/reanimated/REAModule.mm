@@ -332,7 +332,6 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(installTurboModule)
      withRnRuntime:(jsi::Runtime &)rnRuntime
 {
   WorkletRuntimeCollector::install(rnRuntime);
-
   RNRuntimeDecorator::decorate(rnRuntime, nativeReanimatedModule);
 #ifdef RCT_NEW_ARCH_ENABLED
   weakNativeReanimatedModule_ = nativeReanimatedModule;
