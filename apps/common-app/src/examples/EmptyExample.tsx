@@ -20,6 +20,10 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
+Animated.configureLogger({
+  level: 'error',
+});
+
 const SHOW_EXAMPLE: number = -2;
 
 /** [-1]
