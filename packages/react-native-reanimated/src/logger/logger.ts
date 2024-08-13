@@ -38,18 +38,16 @@ function createLog(level: LogLevel, message: string): LogData {
   };
 }
 
+type LogFunction = (data: LogData) => void;
+
 export type LoggerConfig = {
   level?: 'warn' | 'error';
   strict?: boolean;
 };
 
-type LogFunction = (data: LogData) => void;
-
-export const config: Required<LoggerConfig> & { logFunction: LogFunction } = {
-  logFunction: logToConsole,
-  level: 'warn',
-  strict: false,
-};
+export type LoggerConfigInternal = {
+  logFunction: LogFunction;
+} & Required<LoggerConfig>;
 
 type LogOptions = {
   strict?: boolean;
@@ -60,8 +58,16 @@ export function logToLogBoxAndConsole(data: LogData) {
   logToConsole(data);
 }
 
-export function replaceLoggerImplementation(logFunction: LogFunction) {
-  config.logFunction = logFunction;
+export function updateLoggerConfig(config?: Partial<LoggerConfigInternal>) {
+  'worklet';
+  global.__loggerConfig = {
+    logFunction:
+      // Re-use previously assigned log function if it exists
+      config?.logFunction ?? global.__loggerConfig.logFunction ?? logToConsole,
+    // Don't reuse previous level and strict values from the global config
+    level: config?.level ?? 'warn',
+    strict: config?.strict ?? false,
+  };
 }
 
 const logLevelImportance = {
@@ -76,6 +82,7 @@ function handleLog(
   options: LogOptions
 ) {
   'worklet';
+  const config = global.__loggerConfig;
   if (
     (options.strict && !config.strict) ||
     logLevelImportance[level] < logLevelImportance[config.level]
