@@ -11,6 +11,7 @@ const testRunner = new TestRunner();
 const windowDimensionsMocker = testRunner.getWindowDimensionsMocker();
 const animationRecorder = testRunner.getAnimationUpdatesRecorder();
 const valueRegistry = testRunner.getValueRegistry();
+const testSuiteManager = testRunner.getTestSuiteManager();
 const trackerRegistry = testRunner.getTrackerRegistry();
 
 type DescribeFunction = (name: string, buildSuite: BuildFunction) => void;
@@ -21,34 +22,34 @@ type TestEachFunction = <T>(
 type DecoratedTestFunction = TestFunction & { each: TestEachFunction };
 
 const describeBasic = (name: string, buildSuite: BuildFunction) => {
-  testRunner.describe(name, buildSuite, null);
+  testSuiteManager.describe(name, buildSuite, null);
 };
 
 export const describe = <DescribeFunction & Record<DescribeDecorator, DescribeFunction>>describeBasic;
 describe.skip = (name, buildSuite) => {
-  testRunner.describe(name, buildSuite, DescribeDecorator.SKIP);
+  testSuiteManager.describe(name, buildSuite, DescribeDecorator.SKIP);
 };
 describe.only = (name, buildSuite) => {
-  testRunner.describe(name, buildSuite, DescribeDecorator.ONLY);
+  testSuiteManager.describe(name, buildSuite, DescribeDecorator.ONLY);
 };
 
 const testBasic: DecoratedTestFunction = (name: string, testCase: BuildFunction) => {
-  testRunner.test(name, testCase, null);
+  testSuiteManager.test(name, testCase, null);
 };
 testBasic.each = <T>(examples: Array<T>) => {
-  return testRunner.testEach(examples, null);
+  return testSuiteManager.testEach(examples, null);
 };
 const testSkip: DecoratedTestFunction = (name: string, testCase: BuildFunction) => {
-  testRunner.test(name, testCase, TestDecorator.SKIP);
+  testSuiteManager.test(name, testCase, TestDecorator.SKIP);
 };
 testSkip.each = <T>(examples: Array<T>) => {
-  return testRunner.testEach(examples, TestDecorator.SKIP);
+  return testSuiteManager.testEach(examples, TestDecorator.SKIP);
 };
 const testOnly: DecoratedTestFunction = (name: string, testCase: BuildFunction) => {
-  testRunner.test(name, testCase, TestDecorator.ONLY);
+  testSuiteManager.test(name, testCase, TestDecorator.ONLY);
 };
 testOnly.each = <T>(examples: Array<T>) => {
-  return testRunner.testEach(examples, TestDecorator.ONLY);
+  return testSuiteManager.testEach(examples, TestDecorator.ONLY);
 };
 
 type TestType = DecoratedTestFunction & Record<TestDecorator.SKIP | TestDecorator.ONLY, DecoratedTestFunction>;
@@ -58,19 +59,19 @@ test.skip = testSkip;
 test.only = testOnly;
 
 export function beforeAll(job: () => void) {
-  testRunner.beforeAll(job);
-}
-
-export function beforeEach(job: () => void) {
-  testRunner.beforeEach(job);
-}
-
-export function afterEach(job: () => void) {
-  testRunner.afterEach(job);
+  testSuiteManager.setJob('beforeAll', job);
 }
 
 export function afterAll(job: () => void) {
-  testRunner.afterAll(job);
+  testSuiteManager.setJob('afterAll', job);
+}
+
+export function beforeEach(job: () => void) {
+  testSuiteManager.setJob('beforeEach', job);
+}
+
+export function afterEach(job: () => void) {
+  testSuiteManager.setJob('afterEach', job);
 }
 
 export async function render(component: ReactElement<Component> | null) {
@@ -136,7 +137,7 @@ export function notify(name: string) {
 }
 
 export async function waitForNotify(name: string) {
-  return trackerRegistry.waitForNotify(name);
+  await trackerRegistry.waitForNotify(name);
 }
 
 export function expect(value: TestValue) {
