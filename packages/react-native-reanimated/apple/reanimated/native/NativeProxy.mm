@@ -15,7 +15,6 @@
 #import <RNReanimated/RNGestureHandlerStateManager.h>
 #import <RNReanimated/ReanimatedRuntime.h>
 #import <RNReanimated/ReanimatedSensorContainer.h>
-#import <RNReanimated/WorkletsModule.h>
 
 #ifndef NDEBUG
 #import <RNReanimated/REAScreensHelper.h>
@@ -56,18 +55,16 @@ static inline bool getIsReducedMotion()
 }
 
 std::shared_ptr<NativeReanimatedModule>
-createReanimatedModule(REAModule *reaModule, RCTBridge *bridge, const std::shared_ptr<CallInvoker> &jsInvoker)
+createReanimatedModule(REAModule *reaModule, RCTBridge *bridge, WorkletsModule *workletsModule)
 {
   auto nodesManager = reaModule.nodesManager;
 
   PlatformDepMethodsHolder platformDepMethodsHolder = makePlatformDepMethodsHolder(bridge, nodesManager, reaModule);
 
-  constexpr auto isBridgeless = false;
-  WorkletsModule *workletsModule = [bridge moduleForClass:[WorkletsModule class]];
-  const std::shared_ptr<CommonWorkletsModule> commonWorkletsModule = [workletsModule getCommonWorkletsModule];
+  const std::shared_ptr<NativeWorkletsModule> NativeWorkletsModule = [workletsModule getNativeWorkletsModule];
 
   auto nativeReanimatedModule = std::make_shared<NativeReanimatedModule>(
-      commonWorkletsModule, platformDepMethodsHolder, isBridgeless, getIsReducedMotion());
+      NativeWorkletsModule, platformDepMethodsHolder, getIsReducedMotion());
 
   commonInit(reaModule, nativeReanimatedModule);
   // Layout Animation callbacks setup
@@ -83,22 +80,20 @@ createReanimatedModule(REAModule *reaModule, RCTBridge *bridge, const std::share
 }
 
 #if REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED)
-std::shared_ptr<NativeReanimatedModule> createReanimatedModuleBridgeless(RCTModuleRegistry *moduleRegistry)
+std::shared_ptr<NativeReanimatedModule> createReanimatedModuleBridgeless(REAModule *reaModule, RCTModuleRegistry *moduleRegistry, WorkletsModule *workletsModule)
 {
-  REAModule *reaModule = [moduleRegistry moduleForName:"ReanimatedModule"];
+//  REAModule *reaModule = [moduleRegistry moduleForName:"ReanimatedModule"];
 
   auto nodesManager = reaModule.nodesManager;
 
   PlatformDepMethodsHolder platformDepMethodsHolder =
       makePlatformDepMethodsHolderBridgeless(moduleRegistry, nodesManager, reaModule);
 
-  constexpr auto isBridgeless = true;
-
-  WorkletsModule *workletsModule = [moduleRegistry moduleForName:"WorkletsModule"];
-  const auto commonWorkletsModule = [workletsModule getCommonWorkletsModule];
+//  WorkletsModule *workletsModule = [moduleRegistry moduleForName:"WorkletsModule"];
+  const auto NativeWorkletsModule = [workletsModule getNativeWorkletsModule];
 
   auto nativeReanimatedModule = std::make_shared<NativeReanimatedModule>(
-      commonWorkletsModule, platformDepMethodsHolder, isBridgeless, getIsReducedMotion());
+      NativeWorkletsModule, platformDepMethodsHolder, getIsReducedMotion());
 
   commonInit(reaModule, nativeReanimatedModule);
 

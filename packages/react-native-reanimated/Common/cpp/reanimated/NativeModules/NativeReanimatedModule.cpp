@@ -43,15 +43,13 @@ bool CoreFeatures::useNativeState;
 namespace reanimated {
 
 NativeReanimatedModule::NativeReanimatedModule(
-    const std::shared_ptr<CommonWorkletsModule> &commonWorkletsModule,
+    const std::shared_ptr<NativeWorkletsModule> &NativeWorkletsModule,
     const PlatformDepMethodsHolder &platformDepMethodsHolder,
-    const bool isBridgeless,
     const bool isReducedMotion)
     : NativeReanimatedModuleSpec(
-          isBridgeless ? nullptr : commonWorkletsModule->getJSCallInvoker()),
-      isBridgeless_(isBridgeless),
+          NativeWorkletsModule->getJSCallInvoker()),
       isReducedMotion_(isReducedMotion),
-      commonWorkletsModule_(commonWorkletsModule),
+      NativeWorkletsModule_(NativeWorkletsModule),
       eventHandlerRegistry_(std::make_unique<EventHandlerRegistry>()),
       requestRender_(platformDepMethodsHolder.requestRender),
       onRenderCallback_([this](const double timestampMs) {
@@ -61,7 +59,7 @@ NativeReanimatedModule::NativeReanimatedModule(
       animatedSensorModule_(platformDepMethodsHolder),
 
       layoutAnimationsManager_(std::make_shared<LayoutAnimationsManager>(
-          commonWorkletsModule_->getJSLogger())),
+          NativeWorkletsModule_->getJSLogger())),
 #ifdef RCT_NEW_ARCH_ENABLED
       synchronouslyUpdateUIPropsFunction_(
           platformDepMethodsHolder.synchronouslyUpdateUIPropsFunction),
@@ -142,7 +140,7 @@ void NativeReanimatedModule::commonInit(
   };
 #endif
 
-  jsi::Runtime &uiRuntime = commonWorkletsModule_->getUIRuntime();
+  jsi::Runtime &uiRuntime = NativeWorkletsModule_->getUIRuntime();
   UIRuntimeDecorator::decorate(
       uiRuntime,
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -174,9 +172,8 @@ void NativeReanimatedModule::commonInit(
 NativeReanimatedModule::~NativeReanimatedModule() {
   // event handler registry and frame callbacks store some JSI values from UI
   // runtime, so they have to go away before we tear down the runtime
-  eventHandlerRegistry_.reset();
+  // eventHandlerRegistry_.reset();
   frameCallbacks_.clear();
-  //  uiWorkletRuntime_.reset();
 }
 
 jsi::Value NativeReanimatedModule::registerEventHandler(
@@ -192,7 +189,7 @@ jsi::Value NativeReanimatedModule::registerEventHandler(
       rt, worklet, "[Reanimated] Event handler must be a worklet.");
   int emitterReactTagInt = emitterReactTag.asNumber();
 
-  commonWorkletsModule_->getUIScheduler()->scheduleOnUI([=] {
+  NativeWorkletsModule_->getUIScheduler()->scheduleOnUI([=, this] {
     auto handler = std::make_shared<WorkletEventHandler>(
         newRegistrationId, eventNameStr, emitterReactTagInt, handlerShareable);
     eventHandlerRegistry_->registerEventHandler(std::move(handler));
@@ -205,8 +202,8 @@ void NativeReanimatedModule::unregisterEventHandler(
     jsi::Runtime &,
     const jsi::Value &registrationId) {
   uint64_t id = registrationId.asNumber();
-  commonWorkletsModule_->getUIScheduler()->scheduleOnUI(
-      [=] { eventHandlerRegistry_->unregisterEventHandler(id); });
+  NativeWorkletsModule_->getUIScheduler()->scheduleOnUI(
+      [=, this] { eventHandlerRegistry_->unregisterEventHandler(id); });
 }
 
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -275,8 +272,8 @@ jsi::Value NativeReanimatedModule::getViewProp(
   const auto funPtr = std::make_shared<jsi::Function>(
       callback.getObject(rnRuntime).asFunction(rnRuntime));
   const auto shadowNode = shadowNodeFromValue(rnRuntime, shadowNodeWrapper);
-  commonWorkletsModule_->getUIScheduler()->scheduleOnUI([=]() {
-    jsi::Runtime &uiRuntime = commonWorkletsModule_->getUIRuntime();
+  NativeWorkletsModule_->getUIScheduler()->scheduleOnUI([=, this]() {
+    jsi::Runtime &uiRuntime = NativeWorkletsModule_->getUIRuntime();
     const auto resultStr =
         obtainPropFromShadowNode(uiRuntime, propNameStr, shadowNode);
 
@@ -302,15 +299,15 @@ jsi::Value NativeReanimatedModule::getViewProp(
 
   const int viewTagInt = viewTag.asNumber();
 
-  commonWorkletsModule_->getUIScheduler()->scheduleOnUI([=]() {
-    jsi::Runtime &uiRuntime = commonWorkletsModule_->getUIRuntime();
+  NativeWorkletsModule_->getUIScheduler()->scheduleOnUI([=]() {
+    jsi::Runtime &uiRuntime = NativeWorkletsModule_->getUIRuntime();
     const jsi::Value propNameValue =
         jsi::String::createFromUtf8(uiRuntime, propNameStr);
     const auto resultValue =
         obtainPropFunction_(uiRuntime, viewTagInt, propNameValue);
     const auto resultStr = resultValue.asString(uiRuntime).utf8(uiRuntime);
 
-    commonWorkletsModule_->getJSScheduler()->scheduleOnJS(
+    NativeWorkletsModule_->getJSScheduler()->scheduleOnJS(
         [=](jsi::Runtime &rnRuntime) {
           const auto resultValue =
               jsi::String::createFromUtf8(rnRuntime, resultStr);
@@ -413,7 +410,7 @@ void NativeReanimatedModule::requestAnimationFrame(
 void NativeReanimatedModule::maybeRequestRender() {
   if (!renderRequested_) {
     renderRequested_ = true;
-    jsi::Runtime &uiRuntime = commonWorkletsModule_->getUIRuntime();
+    jsi::Runtime &uiRuntime = NativeWorkletsModule_->getUIRuntime();
     requestRender_(onRenderCallback_, uiRuntime);
   }
 }
@@ -421,7 +418,7 @@ void NativeReanimatedModule::maybeRequestRender() {
 void NativeReanimatedModule::onRender(double timestampMs) {
   auto callbacks = std::move(frameCallbacks_);
   frameCallbacks_.clear();
-  jsi::Runtime &uiRuntime = commonWorkletsModule_->getUIRuntime();
+  jsi::Runtime &uiRuntime = NativeWorkletsModule_->getUIRuntime();
   jsi::Value timestamp{timestampMs};
   for (const auto &callback : callbacks) {
     runOnRuntimeGuarded(uiRuntime, *callback, timestamp);
@@ -436,7 +433,7 @@ jsi::Value NativeReanimatedModule::registerSensor(
     const jsi::Value &sensorDataHandler) {
   return animatedSensorModule_.registerSensor(
       rt,
-      commonWorkletsModule_->getUIWorkletRuntime(),
+      NativeWorkletsModule_->getUIWorkletRuntime(),
       sensorType,
       interval,
       iosReferenceFrame,
@@ -500,7 +497,7 @@ bool NativeReanimatedModule::handleEvent(
     const jsi::Value &payload,
     double currentTime) {
   eventHandlerRegistry_->processEvent(
-      commonWorkletsModule_->getUIWorkletRuntime(),
+      NativeWorkletsModule_->getUIWorkletRuntime(),
       currentTime,
       eventName,
       emitterReactTag,
@@ -530,7 +527,7 @@ bool NativeReanimatedModule::handleRawEvent(
   if (eventType.rfind("top", 0) == 0) {
     eventType = "on" + eventType.substr(3);
   }
-  jsi::Runtime &rt = commonWorkletsModule_->getUIRuntime();
+  jsi::Runtime &rt = NativeWorkletsModule_->getUIRuntime();
 #if REACT_NATIVE_MINOR_VERSION >= 73
   const auto &eventPayload = rawEvent.eventPayload;
   jsi::Value payload = eventPayload->asJSIValue(rt);
@@ -575,7 +572,7 @@ void NativeReanimatedModule::performOperations() {
   auto copiedOperationsQueue = std::move(operationsInBatch_);
   operationsInBatch_.clear();
 
-  jsi::Runtime &rt = commonWorkletsModule_->getUIRuntime();
+  jsi::Runtime &rt = NativeWorkletsModule_->getUIRuntime();
 
   {
     auto lock = propsRegistry_->createLock();
@@ -718,7 +715,7 @@ jsi::String NativeReanimatedModule::obtainProp(
     jsi::Runtime &rt,
     const jsi::Value &shadowNodeWrapper,
     const jsi::Value &propName) {
-  jsi::Runtime &uiRuntime = commonWorkletsModule_->getUIRuntime();
+  jsi::Runtime &uiRuntime = NativeWorkletsModule_->getUIRuntime();
   const auto propNameStr = propName.asString(rt).utf8(rt);
   const auto shadowNode = shadowNodeFromValue(rt, shadowNodeWrapper);
   const auto resultStr =
@@ -794,8 +791,8 @@ void NativeReanimatedModule::initializeLayoutAnimations() {
         layoutAnimationsManager_,
         componentDescriptorRegistry,
         scheduler->getContextContainer(),
-        commonWorkletsModule_->getUIRuntime(),
-        commonWorkletsModule_->getUIScheduler());
+        NativeWorkletsModule_->getUIRuntime(),
+        NativeWorkletsModule_->getUIScheduler());
     uiManager_->getShadowTreeRegistry().enumerate(
         [this](const ShadowTree &shadowTree, bool &stop) {
           shadowTree.getMountingCoordinator()->setMountingOverrideDelegate(
@@ -814,8 +811,8 @@ jsi::Value NativeReanimatedModule::subscribeForKeyboardEvents(
       handlerWorklet,
       "[Reanimated] Keyboard event handler must be a worklet.");
   return subscribeForKeyboardEventsFunction_(
-      [=](int keyboardState, int height) {
-        commonWorkletsModule_->getUIWorkletRuntime()->runGuarded(
+      [=, this](int keyboardState, int height) {
+        NativeWorkletsModule_->getUIWorkletRuntime()->runGuarded(
             shareableHandler, jsi::Value(keyboardState), jsi::Value(height));
       },
       isStatusBarTranslucent.getBool());

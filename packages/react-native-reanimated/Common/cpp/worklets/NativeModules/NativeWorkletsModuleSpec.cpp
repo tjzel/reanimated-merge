@@ -1,8 +1,8 @@
-#include "CommonWorkletsModuleSpec.h"
+#include "NativeWorkletsModuleSpec.h"
 
 #include <utility>
 
-#define SPEC_PREFIX(FN_NAME) __hostFunction_CommonWorkletsModuleSpec_##FN_NAME
+#define SPEC_PREFIX(FN_NAME) __hostFunction_NativeWorkletsModuleSpec_##FN_NAME
 
 namespace reanimated {
 
@@ -13,7 +13,7 @@ static jsi::Value SPEC_PREFIX(makeShareableClone)(
     TurboModule &turboModule,
     const jsi::Value *args,
     size_t) {
-  return static_cast<CommonWorkletsModuleSpec *>(&turboModule)
+  return static_cast<NativeWorkletsModuleSpec *>(&turboModule)
       ->makeShareableClone(
           rt, std::move(args[0]), std::move(args[1]), std::move(args[2]));
 }
@@ -25,7 +25,7 @@ static jsi::Value SPEC_PREFIX(scheduleOnUI)(
     TurboModule &turboModule,
     const jsi::Value *args,
     size_t) {
-  static_cast<CommonWorkletsModuleSpec *>(&turboModule)
+  static_cast<NativeWorkletsModuleSpec *>(&turboModule)
       ->scheduleOnUI(rt, std::move(args[0]));
   return jsi::Value::undefined();
 }
@@ -35,7 +35,7 @@ static jsi::Value SPEC_PREFIX(executeOnUIRuntimeSync)(
     TurboModule &turboModule,
     const jsi::Value *args,
     size_t) {
-  return static_cast<CommonWorkletsModuleSpec *>(&turboModule)
+  return static_cast<NativeWorkletsModuleSpec *>(&turboModule)
       ->executeOnUIRuntimeSync(rt, std::move(args[0]));
 }
 
@@ -44,7 +44,7 @@ static jsi::Value SPEC_PREFIX(createWorkletRuntime)(
     TurboModule &turboModule,
     const jsi::Value *args,
     size_t) {
-  return static_cast<CommonWorkletsModuleSpec *>(&turboModule)
+  return static_cast<NativeWorkletsModuleSpec *>(&turboModule)
       ->createWorkletRuntime(rt, std::move(args[0]), std::move(args[1]));
 }
 
@@ -53,11 +53,11 @@ static jsi::Value SPEC_PREFIX(scheduleOnRuntime)(
     TurboModule &turboModule,
     const jsi::Value *args,
     size_t) {
-  return static_cast<CommonWorkletsModuleSpec *>(&turboModule)
+  return static_cast<NativeWorkletsModuleSpec *>(&turboModule)
       ->scheduleOnRuntime(rt, std::move(args[0]), std::move(args[1]));
 }
 
-CommonWorkletsModuleSpec::CommonWorkletsModuleSpec(
+NativeWorkletsModuleSpec::NativeWorkletsModuleSpec(
     const std::shared_ptr<CallInvoker> jsInvoker)
     : TurboModule("CommonWorklets", jsInvoker) {
   methodMap_["makeShareableClone"] =

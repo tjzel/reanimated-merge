@@ -9,27 +9,27 @@
 #include <unordered_set>
 #include <utility>
 #include <vector>
+#include <cxxreact/MessageQueueThread.h>
 
-#include "CommonWorkletsModuleSpec.h"
-#include "EventHandlerRegistry.h"
+#include "NativeWorkletsModuleSpec.h"
+#include "WorkletRuntime.h"
 #include "JSLogger.h"
 #include "JSScheduler.h"
 #include "UIScheduler.h"
 
 namespace reanimated {
 
-class CommonWorkletsModule : public CommonWorkletsModuleSpec {
+class NativeWorkletsModule : public NativeWorkletsModuleSpec {
  public:
-  CommonWorkletsModule(
+  NativeWorkletsModule(
       jsi::Runtime &rnRuntime,
       const std::shared_ptr<JSScheduler> &jsScheduler,
       const std::shared_ptr<MessageQueueThread> &jsQueue,
       const std::shared_ptr<UIScheduler> &uiScheduler,
       const std::string &valueUnpackerCode,
-      const bool isBridgeless,
-      const bool isReducedMotion);
+      const bool isBridgeless);
 
-  ~CommonWorkletsModule();
+  ~NativeWorkletsModule();
 
   jsi::Value makeShareableClone(
       jsi::Runtime &rt,
@@ -70,10 +70,6 @@ class CommonWorkletsModule : public CommonWorkletsModuleSpec {
     return isBridgeless_;
   }
 
-  inline bool isReducedMotion() const {
-    return isReducedMotion_;
-  }
-
   inline std::shared_ptr<CallInvoker> getJSCallInvoker() const {
     return jsScheduler_->getJSCallInvoker();
   }
@@ -86,7 +82,6 @@ class CommonWorkletsModule : public CommonWorkletsModuleSpec {
   void commonInit(jsi::Runtime &rnRuntime);
 
   const bool isBridgeless_;
-  const bool isReducedMotion_;
   const std::shared_ptr<MessageQueueThread> jsQueue_;
   const std::shared_ptr<JSScheduler> jsScheduler_;
   const std::shared_ptr<UIScheduler> uiScheduler_;

@@ -7,6 +7,7 @@
 #import <RNReanimated/NativeReanimatedModule.h>
 #import <React/RCTEventDispatcher.h>
 #import <ReanimatedSensorContainer.h>
+#import <WorkletsModule.h>
 #include <memory>
 
 namespace reanimated {
@@ -16,11 +17,11 @@ static inline bool getIsReducedMotion();
 std::shared_ptr<reanimated::NativeReanimatedModule> createReanimatedModule(
     REAModule *reaModule,
     RCTBridge *bridge,
-    const std::shared_ptr<facebook::react::CallInvoker> &jsInvoker);
+    WorkletsModule *workletsModule);
 
 #if REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED)
 std::shared_ptr<reanimated::NativeReanimatedModule>
-createReanimatedModuleBridgeless(RCTModuleRegistry *moduleRegistry);
+createReanimatedModuleBridgeless(REAModule *reaModule, RCTModuleRegistry *moduleRegistry, WorkletsModule *workletsModule);
 #endif // REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED)
 
 void commonInit(

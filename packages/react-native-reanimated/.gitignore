@@ -68,3 +68,6 @@ plugin/types
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# clangd
+compile_commands.json

@@ -4,7 +4,7 @@
 
 #include <memory>
 
-#include "CommonWorkletsModule.h"
+#include "NativeWorkletsModule.h"
 
 using namespace facebook;
 
@@ -14,7 +14,7 @@ class RNRuntimeWorkletDecorator {
  public:
   static void decorate(
       jsi::Runtime &rnRuntime,
-      const std::shared_ptr<CommonWorkletsModule> &commonWorkletsModule);
+      const std::shared_ptr<NativeWorkletsModule> &NativeWorkletsModule);
 };
 
 } // namespace reanimated

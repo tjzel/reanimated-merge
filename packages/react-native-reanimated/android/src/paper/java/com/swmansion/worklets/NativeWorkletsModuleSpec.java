@@ -1,4 +1,4 @@
-package com.swmansion.worklets;
+package com.swmansion.reanimated;
 
 import com.facebook.proguard.annotations.DoNotStrip;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -7,11 +7,11 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.turbomodule.core.interfaces.TurboModule;
 import javax.annotation.Nonnull;
 
-public abstract class CommonWorkletsModuleSpec extends ReactContextBaseJavaModule
-    implements TurboModule {
+public abstract class NativeWorkletsModuleSpec
+    extends ReactContextBaseJavaModule implements TurboModule {
   public static final String NAME = "WorkletsModule";
 
-  public CommonWorkletsModuleSpec(ReactApplicationContext reactContext) {
+  public NativeWorkletsModuleSpec(ReactApplicationContext reactContext) {
     super(reactContext);
   }
 

@@ -22,7 +22,7 @@
 #include <vector>
 
 #include "AndroidUIScheduler.h"
-#include "CommonWorkletsModule.h"
+#include "NativeWorkletsModule.h"
 #include "JNIHelper.h"
 #include "UIScheduler.h"
 
@@ -43,8 +43,8 @@ class WorkletsNativeProxy : public jni::HybridClass<WorkletsNativeProxy> {
       jni::alias_ref<AndroidUIScheduler::javaobject> androidUiScheduler,
       jni::alias_ref<JavaMessageQueueThread::javaobject> messageQueueThread,
 #ifdef RCT_NEW_ARCH_ENABLED
-      jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
-          fabricUIManager,
+//      jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
+//          fabricUIManager,
 #endif
       const std::string &valueUnpackerCode);
 
@@ -54,35 +54,25 @@ class WorkletsNativeProxy : public jni::HybridClass<WorkletsNativeProxy> {
       jlong jsContext,
       jni::alias_ref<react::JRuntimeExecutor::javaobject> runtimeExecutorHolder,
       jni::alias_ref<AndroidUIScheduler::javaobject> androidUiScheduler,
-      jni::alias_ref<LayoutAnimations::javaobject> layoutAnimations,
+//      jni::alias_ref<LayoutAnimations::javaobject> layoutAnimations,
       jni::alias_ref<JavaMessageQueueThread::javaobject> messageQueueThread,
-      jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
-          fabricUIManager,
+//      jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
+//          fabricUIManager,
       const std::string &valueUnpackerCode);
 #endif // REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED
   static void registerNatives();
 
-  inline std::shared_ptr<reanimated::CommonWorkletsModule>
-  getCommonWorkletsModule() {
-    return commonWorkletsModule_;
+  inline std::shared_ptr<reanimated::NativeWorkletsModule>
+  getNativeWorkletsModule() {
+    return NativeWorkletsModule_;
   }
 
  private:
   friend HybridBase;
   jni::global_ref<WorkletsNativeProxy::javaobject> javaPart_;
   jsi::Runtime *rnRuntime_;
-  std::shared_ptr<reanimated::CommonWorkletsModule> commonWorkletsModule_;
-#ifndef NDEBUG
-  void checkJavaVersion(jsi::Runtime &);
-  void injectCppVersion();
-#endif // NDEBUG
-#ifdef RCT_NEW_ARCH_ENABLED
-  // removed temporarily, event listener mechanism needs to be fixed on RN side
-  // std::shared_ptr<facebook::react::Scheduler> reactScheduler_;
-  // std::shared_ptr<EventListener> eventListener_;
-#endif // RCT_NEW_ARCH_ENABLED
+  std::shared_ptr<reanimated::NativeWorkletsModule> NativeWorkletsModule_;
   void installJSIBindings();
-  bool getIsReducedMotion();
 
   /***
    * Wraps a method of `WorkletsNativeProxy` in a function object capturing
@@ -113,8 +103,8 @@ class WorkletsNativeProxy : public jni::HybridClass<WorkletsNativeProxy> {
       const std::shared_ptr<reanimated::UIScheduler> &uiScheduler,
       jni::alias_ref<JavaMessageQueueThread::javaobject> messageQueueThread,
 #ifdef RCT_NEW_ARCH_ENABLED
-      jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
-          fabricUIManager,
+      // jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
+      //     fabricUIManager,
 #endif
       const std::string &valueUnpackerCode);
 
@@ -124,16 +114,16 @@ class WorkletsNativeProxy : public jni::HybridClass<WorkletsNativeProxy> {
       jsi::Runtime *rnRuntime,
       RuntimeExecutor runtimeExecutor,
       const std::shared_ptr<UIScheduler> &uiScheduler,
-      jni::global_ref<LayoutAnimations::javaobject> layoutAnimations,
+//      jni::global_ref<LayoutAnimations::javaobject> layoutAnimations,
       jni::alias_ref<JavaMessageQueueThread::javaobject> messageQueueThread,
-      jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
-          fabricUIManager,
+//      jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
+//          fabricUIManager,
       const std::string &valueUnpackerCode);
 #endif // REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED
 
 #ifdef RCT_NEW_ARCH_ENABLED
-  void commonInit(jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
-                      &fabricUIManager);
+//  void commonInit(jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
+//                      &fabricUIManager);
 #endif // RCT_NEW_ARCH_ENABLED
 };
 

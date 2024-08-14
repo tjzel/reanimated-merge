@@ -17,9 +17,9 @@ using namespace react;
 
 namespace reanimated {
 
-class JSI_EXPORT CommonWorkletsModuleSpec : public TurboModule {
+class JSI_EXPORT NativeWorkletsModuleSpec : public TurboModule {
  protected:
-  explicit CommonWorkletsModuleSpec(
+  explicit NativeWorkletsModuleSpec(
       const std::shared_ptr<CallInvoker> jsInvoker);
 
  public:

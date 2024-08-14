@@ -11,7 +11,7 @@
 #include <vector>
 
 #include "AnimatedSensorModule.h"
-#include "CommonWorkletsModule.h"
+#include "NativeWorkletsModule.h"
 #include "EventHandlerRegistry.h"
 #include "JSScheduler.h"
 #include "LayoutAnimationsManager.h"
@@ -31,14 +31,8 @@ namespace reanimated {
 class NativeReanimatedModule : public NativeReanimatedModuleSpec {
  public:
   NativeReanimatedModule(
-      const std::shared_ptr<CommonWorkletsModule> &commonWorkletsModule,
-      //      jsi::Runtime &rnRuntime,
-      //      const std::shared_ptr<JSScheduler> &jsScheduler,
-      //      const std::shared_ptr<MessageQueueThread> &jsQueue,
-      //      const std::shared_ptr<UIScheduler> &uiScheduler,
+      const std::shared_ptr<NativeWorkletsModule> &NativeWorkletsModule,
       const PlatformDepMethodsHolder &platformDepMethodsHolder,
-      //      const std::string &valueUnpackerCode,
-      const bool isBridgeless,
       const bool isReducedMotion);
 
   ~NativeReanimatedModule();
@@ -148,20 +142,16 @@ class NativeReanimatedModule : public NativeReanimatedModuleSpec {
     return *layoutAnimationsManager_;
   }
 
-  inline jsi::Runtime &getUIRuntime() const {
-    return commonWorkletsModule_->getUIRuntime();
+  [[nodiscard]] inline jsi::Runtime &getUIRuntime() const {
+    return NativeWorkletsModule_->getUIRuntime();
   }
 
-  inline bool isBridgeless() const {
-    return isBridgeless_;
-  }
-
-  inline bool isReducedMotion() const {
+  [[nodiscard]] inline bool isReducedMotion() const {
     return isReducedMotion_;
   }
 
-  inline std::shared_ptr<CommonWorkletsModule> getCommonWorkletsModule() const {
-    return commonWorkletsModule_;
+  [[nodiscard]] inline std::shared_ptr<NativeWorkletsModule> getNativeWorkletsModule() const {
+    return NativeWorkletsModule_;
   }
 
  private:
@@ -176,14 +166,9 @@ class NativeReanimatedModule : public NativeReanimatedModuleSpec {
       const jsi::Value &props);
 #endif // RCT_NEW_ARCH_ENABLED
 
-  const bool isBridgeless_;
   const bool isReducedMotion_;
-  const std::shared_ptr<CommonWorkletsModule> commonWorkletsModule_;
-  //  const std::shared_ptr<MessageQueueThread> jsQueue_;
+  const std::shared_ptr<NativeWorkletsModule> NativeWorkletsModule_;
   const std::shared_ptr<JSScheduler> jsScheduler_;
-  //  const std::shared_ptr<UIScheduler> uiScheduler_;
-  //  std::shared_ptr<WorkletRuntime> uiWorkletRuntime_;
-  //  std::string valueUnpackerCode_;
 
   std::unique_ptr<EventHandlerRegistry> eventHandlerRegistry_;
   const RequestRenderFunction requestRender_;

@@ -17,8 +17,9 @@ target_include_directories(
     "${REANIMATED_COMMON_CPP_DIR}/Fabric"
     "${REANIMATED_COMMON_CPP_DIR}/LayoutAnimations"
     "${REANIMATED_COMMON_CPP_DIR}/NativeModules"
-    "${REANIMATED_COMMON_CPP_DIR}/Tools"
     "${REANIMATED_COMMON_CPP_DIR}/RuntimeDecorators"
+    "${REANIMATED_COMMON_CPP_DIR}/Registries"
+    "${REANIMATED_COMMON_CPP_DIR}/Tools"
 )
 
 target_include_directories(
@@ -30,9 +31,7 @@ target_include_directories(
 target_include_directories(
     reanimated
     PRIVATE
-    "${WORKLETS_COMMON_CPP_DIR}/CommonModules"
-
-    # "${WORKLETS_ANDROID_DIR}" # is it needed?
+    "${WORKLETS_COMMON_CPP_DIR}/NativeModules" # TODO: remove
 )
 
 target_include_directories(

@@ -153,24 +153,24 @@ class NativeProxy : public jni::HybridClass<NativeProxy> {
       jni::alias_ref<jhybridobject> jThis,
       jni::alias_ref<WorkletsNativeProxy::javaobject> jWorkletsNativeProxy,
       jlong jsContext,
-      jni::alias_ref<LayoutAnimations::javaobject> layoutAnimations
+      jni::alias_ref<LayoutAnimations::javaobject> layoutAnimations,
 #ifdef RCT_NEW_ARCH_ENABLED
           jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
-              fabricUIManager,
+              fabricUIManager
 #endif
   );
 
 #if REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED)
   static jni::local_ref<jhybriddata> initHybridBridgeless(
       jni::alias_ref<jhybridobject> jThis,
+      jni::alias_ref<WorkletsNativeProxy::javaobject> jWorkletsNativeProxy,
       jlong jsContext,
-      jni::alias_ref<react::JRuntimeExecutor::javaobject> runtimeExecutorHolder,
-      jni::alias_ref<AndroidUIScheduler::javaobject> androidUiScheduler,
+//      jni::alias_ref<react::JRuntimeExecutor::javaobject> runtimeExecutorHolder,
+//      jni::alias_ref<AndroidUIScheduler::javaobject> androidUiScheduler,
       jni::alias_ref<LayoutAnimations::javaobject> layoutAnimations,
-      jni::alias_ref<JavaMessageQueueThread::javaobject> messageQueueThread,
+//      jni::alias_ref<JavaMessageQueueThread::javaobject> messageQueueThread,
       jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
-          fabricUIManager,
-      const std::string &valueUnpackerCode);
+          fabricUIManager);
 #endif // REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED
   static void registerNatives();
 
@@ -273,27 +273,31 @@ class NativeProxy : public jni::HybridClass<NativeProxy> {
 
   explicit NativeProxy(
       jni::alias_ref<NativeProxy::jhybridobject> jThis,
-      const std::shared_ptr<CommonWorkletsModule> &commonWorkletsModule,
+      const std::shared_ptr<NativeWorkletsModule> &NativeWorkletsModule,
       jsi::Runtime *rnRuntime,
-      jni::global_ref<LayoutAnimations::javaobject> layoutAnimations
+      jni::global_ref<LayoutAnimations::javaobject> layoutAnimations,
 #ifdef RCT_NEW_ARCH_ENABLED
           jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
-              fabricUIManager,
+              fabricUIManager
 #endif
   );
 
+  //  Pending exception java.lang.NoSuchMethodError: no static or non-static method "Lcom/swmansion/reanimated/NativeProxy;.initHybrid(Lcom/swmansion/worklets/WorkletsNativeProxy;JLcom/swmansion/reanimated/layoutReanimation/LayoutAnimations;Lcom/facebook/react/fabric/FabricUIManager;)Lcom/facebook/jni/HybridData;"
+
 #if REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED)
-  explicit NativeProxy(
-      jni::alias_ref<NativeProxy::jhybridobject> jThis,
-      jsi::Runtime *rnRuntime,
-      RuntimeExecutor runtimeExecutor,
-      const std::shared_ptr<UIScheduler> &uiScheduler,
-      jni::global_ref<LayoutAnimations::javaobject> layoutAnimations,
-      jni::alias_ref<JavaMessageQueueThread::javaobject> messageQueueThread,
-      jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
-          fabricUIManager,
-      const std::string &valueUnpackerCode);
-#endif // REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED
+  // explicit NativeProxy(
+  //     jni::alias_ref<NativeProxy::jhybridobject> jThis,
+  //     const std::shared_ptr<NativeWorkletsModule>& NativeWorkletsModule,
+  //     jsi::Runtime *rnRuntime,
+  //     // RuntimeExecutor runtimeExecutor,
+  //     // const std::shared_ptr<UIScheduler> &uiScheduler,
+  //     jni::global_ref<LayoutAnimations::javaobject> layoutAnimations,
+  //     // jni::alias_ref<JavaMessageQueueThread::javaobject> messageQueueThread,
+  //     jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
+  //         fabricUIManager
+  //     // const std::string &valueUnpackerCode
+  //     );
+#endif // REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED)
 
 #ifdef RCT_NEW_ARCH_ENABLED
   void commonInit(jni::alias_ref<facebook::react::JFabricUIManager::javaobject>

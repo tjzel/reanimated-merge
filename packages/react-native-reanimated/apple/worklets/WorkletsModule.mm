@@ -4,9 +4,6 @@
 #if REACT_NATIVE_MINOR_VERSION < 73
 #import <React/RCTRuntimeExecutorFromBridge.h>
 #endif // REACT_NATIVE_MINOR_VERSION < 73
-#endif // RCT_NEW_ARCH_ENABLED
-
-#ifdef RCT_NEW_ARCH_ENABLED
 #import <RNReanimated/REAInitializerRCTFabricSurface.h>
 #endif // RCT_NEW_ARCH_ENABLED
 
@@ -32,22 +29,23 @@ using namespace reanimated;
 - (void *)runtime;
 @end
 
-//@interface RCTBridge (RCTTurboModule)
-//- (std::shared_ptr<facebook::react::CallInvoker>)jsCallInvoker;
-//- (void)_tryAndHandleError:(dispatch_block_t)block;
-//@end
+// It can be disabled sometimes?
+ @interface RCTBridge (RCTTurboModule)
+ - (std::shared_ptr<facebook::react::CallInvoker>)jsCallInvoker;
+ - (void)_tryAndHandleError:(dispatch_block_t)block;
+ @end
 
 @implementation WorkletsModule {
 #ifndef NDEBUG
   SingleInstanceChecker<REAModule> singleInstanceChecker_;
 #endif // NDEBUG
-  std::shared_ptr<CommonWorkletsModule> commonWorkletsModule_;
+  std::shared_ptr<NativeWorkletsModule> NativeWorkletsModule_;
   bool _isBridgeless;
 }
 
-- (std::shared_ptr<CommonWorkletsModule>)getCommonWorkletsModule
+- (std::shared_ptr<NativeWorkletsModule>)getNativeWorkletsModule
 {
-  return commonWorkletsModule_;
+  return NativeWorkletsModule_;
 }
 
 @synthesize moduleRegistry = _moduleRegistry;
@@ -77,6 +75,11 @@ RCT_EXPORT_MODULE(WorkletsModule);
 #endif // REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED)
 }
 
+- (BOOL)isBridgeless
+{
+  return _isBridgeless;
+}
+
 RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(installTurboModule : (nonnull NSString *)valueUnpackerCode)
 {
 #if REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED)
@@ -96,16 +99,16 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(installTurboModule : (nonnull NSString *)
   });
 
   // TODO: FIX IT
-  constexpr auto isReducedMotion = false;
+//  constexpr auto isReducedMotion = false;
 
-  commonWorkletsModule_ = std::make_shared<CommonWorkletsModule>(
+  NativeWorkletsModule_ = std::make_shared<NativeWorkletsModule>(
       rnRuntime,
       jsScheduler,
       jsQueue,
       uiScheduler,
       std::string([valueUnpackerCode UTF8String]),
-      _isBridgeless,
-      isReducedMotion);
+                                                                 _isBridgeless);
+//      isReducedMotion);
 
   return @YES;
 }

@@ -26,7 +26,7 @@ target_include_directories(
     "${WORKLETS_COMMON_CPP_DIR}/SharedItems"
     "${WORKLETS_COMMON_CPP_DIR}/Tools"
     "${WORKLETS_COMMON_CPP_DIR}/WorkletRuntime"
-    "${WORKLETS_COMMON_CPP_DIR}/CommonModules"
+    "${WORKLETS_COMMON_CPP_DIR}/NativeModules"
     "${WORKLETS_ANDROID_CPP_DIR}"
 )
 

@@ -8,7 +8,7 @@
 #else // RCT_NEW_ARCH_ENABLED
 #import <React/RCTBridgeModule.h>
 #endif // RCT_NEW_ARCH_ENABLED
-#import <RNReanimated/CommonWorkletsModule.h>
+#import <RNReanimated/NativeWorkletsModule.h>
 #import <React/RCTEventDispatcher.h>
 #import <React/RCTEventEmitter.h>
 #import <React/RCTUIManager.h>
@@ -19,10 +19,8 @@ using namespace reanimated;
 
 @interface WorkletsModule : RCTEventEmitter <RCTBridgeModule>
 
-// #ifdef RCT_NEW_ARCH_ENABLED
-//- (void)installReanimatedAfterReload;
-// #endif // RCT_NEW_ARCH_ENABLED
+- (std::shared_ptr<NativeWorkletsModule>)getNativeWorkletsModule;
 
-- (std::shared_ptr<CommonWorkletsModule>)getCommonWorkletsModule;
+- (BOOL)isBridgeless;
 
 @end
