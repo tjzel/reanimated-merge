@@ -20,6 +20,7 @@ import javax.annotation.Nullable;
 public class ReanimatedModule extends NativeReanimatedModuleSpec
     implements LifecycleEventListener, UIManagerModuleListener,
                UIManagerListener {
+                
   public void didDispatchMountItems(@NonNull UIManager uiManager) {
     // Keep: Required for UIManagerListener
   }

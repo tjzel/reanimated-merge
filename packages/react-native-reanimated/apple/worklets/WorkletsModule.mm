@@ -98,9 +98,6 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(installTurboModule : (nonnull NSString *)
     throw error;
   });
 
-  // TODO: FIX IT
-//  constexpr auto isReducedMotion = false;
-
   NativeWorkletsModule_ = std::make_shared<NativeWorkletsModule>(
       rnRuntime,
       jsScheduler,
@@ -108,7 +105,6 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(installTurboModule : (nonnull NSString *)
       uiScheduler,
       std::string([valueUnpackerCode UTF8String]),
                                                                  _isBridgeless);
-//      isReducedMotion);
 
   return @YES;
 }

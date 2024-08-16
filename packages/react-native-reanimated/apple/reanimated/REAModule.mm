@@ -38,7 +38,7 @@ using namespace reanimated;
 - (void *)runtime;
 @end
 
-// It can be disabled sometimes?
+// TODO: This interface doesn't hav to be defined sometimes?
 @interface RCTBridge (RCTTurboModule)
 - (std::shared_ptr<facebook::react::CallInvoker>)jsCallInvoker;
 - (void)_tryAndHandleError:(dispatch_block_t)block;

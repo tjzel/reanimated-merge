@@ -7,6 +7,8 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.soloader.SoLoader;
 import java.lang.ref.WeakReference;
 
+// TODO: Merge this class with "WorkletsModule";
+
 public abstract class WorkletsNativeProxyCommon {
   static {
     SoLoader.loadLibrary("worklets");
@@ -33,14 +35,5 @@ public abstract class WorkletsNativeProxyCommon {
 
   public void invalidate() {
     mAndroidUIScheduler.deactivate();
-  }
-
-  // @DoNotStrip
-  public boolean getIsReducedMotion() {
-    ContentResolver mContentResolver = mContext.get().getContentResolver();
-    String rawValue =
-        Settings.Global.getString(mContentResolver, Settings.Global.TRANSITION_ANIMATION_SCALE);
-    float parsedValue = rawValue != null ? Float.parseFloat(rawValue) : 1f;
-    return parsedValue == 0f;
   }
 }

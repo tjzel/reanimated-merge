@@ -282,9 +282,7 @@ class NativeProxy : public jni::HybridClass<NativeProxy> {
 #endif
   );
 
-  //  Pending exception java.lang.NoSuchMethodError: no static or non-static method "Lcom/swmansion/reanimated/NativeProxy;.initHybrid(Lcom/swmansion/worklets/WorkletsNativeProxy;JLcom/swmansion/reanimated/layoutReanimation/LayoutAnimations;Lcom/facebook/react/fabric/FabricUIManager;)Lcom/facebook/jni/HybridData;"
-
-#if REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED)
+// #if REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED)
   // explicit NativeProxy(
   //     jni::alias_ref<NativeProxy::jhybridobject> jThis,
   //     const std::shared_ptr<NativeWorkletsModule>& NativeWorkletsModule,
@@ -297,7 +295,7 @@ class NativeProxy : public jni::HybridClass<NativeProxy> {
   //         fabricUIManager
   //     // const std::string &valueUnpackerCode
   //     );
-#endif // REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED)
+// #endif // REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED)
 
 #ifdef RCT_NEW_ARCH_ENABLED
   void commonInit(jni::alias_ref<facebook::react::JFabricUIManager::javaobject>

@@ -36,6 +36,9 @@ import java.util.Set;
  * @noinspection JavaJniMissingFunction
  */
 public abstract class NativeProxyCommon {
+  static {
+    SoLoader.loadLibrary("reanimated");
+  }
 
   protected final WorkletsNativeProxy mWorkletsNativeProxy;
   protected NodesManager mNodesManager;

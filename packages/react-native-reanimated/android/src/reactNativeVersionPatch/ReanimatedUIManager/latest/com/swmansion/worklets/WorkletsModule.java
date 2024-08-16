@@ -8,7 +8,6 @@ import javax.annotation.Nullable;
 
 @ReactModule(name = WorkletsModule.NAME)
 public class WorkletsModule extends NativeWorkletsModuleSpec {
-  public static final String NAME = "WorkletsModule";
   private @Nullable WorkletsNativeProxy mWorkletsNativeProxy;
 
   public WorkletsNativeProxy getWorkletsNativeProxy() {

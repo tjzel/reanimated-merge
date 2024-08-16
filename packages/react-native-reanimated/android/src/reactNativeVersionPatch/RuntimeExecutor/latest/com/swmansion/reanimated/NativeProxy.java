@@ -28,8 +28,7 @@ public class NativeProxy extends NativeProxyCommon {
     ReactFeatureFlagsWrapper.enableMountHooks();
 
     FabricUIManager fabricUIManager =
-        (FabricUIManager)UIManagerHelper.getUIManager(
-            context, UIManagerType.FABRIC);
+        (FabricUIManager) UIManagerHelper.getUIManager(context, UIManagerType.FABRIC);
 
     LayoutAnimations LayoutAnimations = new LayoutAnimations(context);
 
@@ -95,8 +94,7 @@ public class NativeProxy extends NativeProxyCommon {
       //      String valueUnpackerCode
   );
 
-  public native boolean
-  isAnyHandlerWaitingForEvent(String eventName, int emitterReactTag);
+  public native boolean isAnyHandlerWaitingForEvent(String eventName, int emitterReactTag);
 
   public native void performOperations();
 
@@ -105,12 +103,10 @@ public class NativeProxy extends NativeProxyCommon {
     return mHybridData;
   }
 
-  public static NativeMethodsHolder createNativeMethodsHolder(
-      LayoutAnimations layoutAnimations) {
+  public static NativeMethodsHolder createNativeMethodsHolder(LayoutAnimations layoutAnimations) {
     return new NativeMethodsHolder() {
       @Override
-      public void startAnimation(
-          int tag, int type, HashMap<String, Object> values) {
+      public void startAnimation(int tag, int type, HashMap<String, Object> values) {
         // NOT IMPLEMENTED
       }
 

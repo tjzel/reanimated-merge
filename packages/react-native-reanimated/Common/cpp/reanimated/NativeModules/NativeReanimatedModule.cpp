@@ -172,7 +172,7 @@ void NativeReanimatedModule::commonInit(
 NativeReanimatedModule::~NativeReanimatedModule() {
   // event handler registry and frame callbacks store some JSI values from UI
   // runtime, so they have to go away before we tear down the runtime
-  // eventHandlerRegistry_.reset();
+  eventHandlerRegistry_.reset();
   frameCallbacks_.clear();
 }
 
