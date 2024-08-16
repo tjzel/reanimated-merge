@@ -7,7 +7,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.soloader.SoLoader;
 import java.lang.ref.WeakReference;
 
-// TODO: Merge this class with "WorkletsModule";
+// TODO: Merge this class with "WorkletsModule".
 
 public abstract class WorkletsNativeProxyCommon {
   static {
