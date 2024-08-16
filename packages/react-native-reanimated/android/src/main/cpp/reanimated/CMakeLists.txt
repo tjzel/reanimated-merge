@@ -31,6 +31,7 @@ target_include_directories(
 target_include_directories(
     reanimated
     PRIVATE
+    <<<<<<< HEAD
     "${WORKLETS_COMMON_CPP_DIR}/NativeModules" # TODO: remove
 )
 
@@ -40,6 +41,10 @@ target_include_directories(
     "${REACT_NATIVE_DIR}/ReactCommon"
     "${REACT_NATIVE_DIR}/ReactAndroid/src/main/jni/react/turbomodule"
     "${REACT_NATIVE_DIR}/ReactCommon/react/nativemodule/core/ReactCommon"
+    =======
+    "${REACT_NATIVE_DIR}/ReactCommon"
+    "${REACT_NATIVE_DIR}/ReactAndroid/src/main/jni/react/turbomodule"
+    >>>>>>> main
     "${REACT_NATIVE_DIR}/ReactCommon/callinvoker"
     "${REACT_NATIVE_DIR}/ReactCommon/runtimeexecutor"
 )

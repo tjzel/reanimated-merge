@@ -28,6 +28,7 @@ import com.facebook.react.uimanager.UIManagerHelper;
 import com.facebook.react.uimanager.UIManagerModule;
 import com.facebook.react.uimanager.UIManagerReanimatedHelper;
 import com.facebook.react.uimanager.common.UIManagerType;
+import com.facebook.react.uimanager.drawable.CSSBackgroundDrawable;
 import com.facebook.react.uimanager.events.Event;
 import com.facebook.react.uimanager.events.EventDispatcherListener;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
@@ -65,7 +66,8 @@ public class NodesManager implements EventDispatcherListener {
     NativeMethodsHelper.scrollTo(view, x, y, animated);
   }
 
-  public void dispatchCommand(int viewTag, String commandId, ReadableArray commandArgs) {
+  public void
+  dispatchCommand(int viewTag, String commandId, ReadableArray commandArgs) {
     // mUIManager.dispatchCommand must be called from native modules queue
     // thread because of an assert in ShadowNodeRegistry.getNode
     mContext.runOnNativeModulesQueueThread(
@@ -98,13 +100,15 @@ public class NodesManager implements EventDispatcherListener {
   private final DeviceEventManagerModule.RCTDeviceEventEmitter mEventEmitter;
   private final ReactChoreographer mReactChoreographer;
   private final GuardedFrameCallback mChoreographerCallback;
-  protected final UIManagerModule.CustomEventNamesResolver mCustomEventNamesResolver;
+  protected final UIManagerModule
+      .CustomEventNamesResolver mCustomEventNamesResolver;
   private final AtomicBoolean mCallbackPosted = new AtomicBoolean();
   private final ReactContext mContext;
   private final UIManager mUIManager;
   private RCTEventEmitter mCustomEventHandler = new NoopEventHandler();
   private List<OnAnimationFrame> mFrameCallbacks = new ArrayList<>();
-  private final ConcurrentLinkedQueue<CopiedEvent> mEventQueue = new ConcurrentLinkedQueue<>();
+  private final ConcurrentLinkedQueue<CopiedEvent> mEventQueue =
+      new ConcurrentLinkedQueue<>();
   private double lastFrameTimeMs;
   public Set<String> uiProps = Collections.emptySet();
   public Set<String> nativeProps = Collections.emptySet();
@@ -156,25 +160,25 @@ public class NodesManager implements EventDispatcherListener {
   public NodesManager(ReactContext context, WorkletsModule workletsModule) {
     mContext = context;
     mWorkletsModule = workletsModule;
-    int uiManagerType =
-        BuildConfig.IS_NEW_ARCHITECTURE_ENABLED ? UIManagerType.FABRIC : UIManagerType.DEFAULT;
+    int uiManagerType = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
+        ? UIManagerType.FABRIC
+        : UIManagerType.DEFAULT;
     mUIManager = UIManagerHelper.getUIManager(context, uiManagerType);
     assert mUIManager != null;
-    mUIImplementation =
-        mUIManager instanceof UIManagerModule
-            ? ((UIManagerModule) mUIManager).getUIImplementation()
-            : null;
+    mUIImplementation = mUIManager instanceof UIManagerModule
+        ? ((UIManagerModule)mUIManager).getUIImplementation()
+        : null;
     mCustomEventNamesResolver = mUIManager::resolveCustomDirectEventName;
-    mEventEmitter = context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class);
+    mEventEmitter = context.getJSModule(
+        DeviceEventManagerModule.RCTDeviceEventEmitter.class);
 
     mReactChoreographer = ReactChoreographer.getInstance();
-    mChoreographerCallback =
-        new GuardedFrameCallback(context) {
-          @Override
-          protected void doFrameGuarded(long frameTimeNanos) {
-            onAnimationFrame(frameTimeNanos);
-          }
-        };
+    mChoreographerCallback = new GuardedFrameCallback(context) {
+      @Override
+      protected void doFrameGuarded(long frameTimeNanos) {
+        onAnimationFrame(frameTimeNanos);
+      }
+    };
 
     // We register as event listener at the end, because we pass `this` and we
     // haven't finished constructing an object yet. This lead to a crash
@@ -185,7 +189,9 @@ public class NodesManager implements EventDispatcherListener {
     // in the `onEventDispatch()` method. This method indirectly uses
     // `mChoreographerCallback` which was created after event registration,
     // creating race condition
-    Objects.requireNonNull(UIManagerHelper.getEventDispatcher(context, uiManagerType))
+    Objects
+        .requireNonNull(
+            UIManagerHelper.getEventDispatcher(context, uiManagerType))
         .addListener(this);
 
     mAnimationManager = new AnimationsManager(mContext, mUIManager);
@@ -211,14 +217,16 @@ public class NodesManager implements EventDispatcherListener {
   public void startUpdatingOnAnimationFrame() {
     if (!mCallbackPosted.getAndSet(true)) {
       mReactChoreographer.postFrameCallback(
-          ReactChoreographer.CallbackType.NATIVE_ANIMATED_MODULE, mChoreographerCallback);
+          ReactChoreographer.CallbackType.NATIVE_ANIMATED_MODULE,
+          mChoreographerCallback);
     }
   }
 
   private void stopUpdatingOnAnimationFrame() {
     if (mCallbackPosted.getAndSet(false)) {
       mReactChoreographer.removeFrameCallback(
-          ReactChoreographer.CallbackType.NATIVE_ANIMATED_MODULE, mChoreographerCallback);
+          ReactChoreographer.CallbackType.NATIVE_ANIMATED_MODULE,
+          mChoreographerCallback);
     }
   }
 
@@ -228,40 +236,43 @@ public class NodesManager implements EventDispatcherListener {
         mNativeProxy.performOperations();
       }
     } else if (!mOperationsInBatch.isEmpty()) {
-      final Queue<NativeUpdateOperation> copiedOperationsQueue = mOperationsInBatch;
+      final Queue<NativeUpdateOperation> copiedOperationsQueue =
+          mOperationsInBatch;
       mOperationsInBatch = new LinkedList<>();
       final boolean trySynchronously = mTryRunBatchUpdatesSynchronously;
       mTryRunBatchUpdatesSynchronously = false;
       final Semaphore semaphore = new Semaphore(0);
-      mContext.runOnNativeModulesQueueThread(
-          new GuardedRunnable(mContext.getExceptionHandler()) {
-            @Override
-            public void runGuarded() {
-              boolean queueWasEmpty =
-                  UIManagerReanimatedHelper.isOperationQueueEmpty(mUIImplementation);
-              boolean shouldDispatchUpdates = trySynchronously && queueWasEmpty;
-              if (!shouldDispatchUpdates) {
-                semaphore.release();
-              }
-              while (!copiedOperationsQueue.isEmpty()) {
-                NativeUpdateOperation op = copiedOperationsQueue.remove();
-                var shadowNode = mUIImplementation.resolveShadowNode(op.mViewTag);
-                if (shadowNode != null) {
-                  ((UIManagerModule) mUIManager)
-                      .updateView(op.mViewTag, shadowNode.getViewClass(), op.mNativeProps);
-                }
-              }
-              if (queueWasEmpty) {
-                mUIImplementation.dispatchViewUpdates(-1); // no associated batchId
-              }
-              if (shouldDispatchUpdates) {
-                semaphore.release();
-              }
+      mContext.runOnNativeModulesQueueThread(new GuardedRunnable(
+          mContext.getExceptionHandler()) {
+        @Override
+        public void runGuarded() {
+          boolean queueWasEmpty =
+              UIManagerReanimatedHelper.isOperationQueueEmpty(
+                  mUIImplementation);
+          boolean shouldDispatchUpdates = trySynchronously && queueWasEmpty;
+          if (!shouldDispatchUpdates) {
+            semaphore.release();
+          }
+          while (!copiedOperationsQueue.isEmpty()) {
+            NativeUpdateOperation op = copiedOperationsQueue.remove();
+            var shadowNode = mUIImplementation.resolveShadowNode(op.mViewTag);
+            if (shadowNode != null) {
+              ((UIManagerModule)mUIManager)
+                  .updateView(
+                      op.mViewTag, shadowNode.getViewClass(), op.mNativeProps);
             }
-          });
+          }
+          if (queueWasEmpty) {
+            mUIImplementation.dispatchViewUpdates(-1); // no associated batchId
+          }
+          if (shouldDispatchUpdates) {
+            semaphore.release();
+          }
+        }
+      });
       if (trySynchronously) {
         try {
-          //noinspection ResultOfMethodCallIgnored
+          // noinspection ResultOfMethodCallIgnored
           semaphore.tryAcquire(16, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
           // if the thread is interrupted we just continue and let the layout
@@ -277,8 +288,8 @@ public class NodesManager implements EventDispatcherListener {
 
     double currentFrameTimeMs = frameTimeNanos / 1000000.;
     if (mSlowAnimationsEnabled) {
-      currentFrameTimeMs =
-          mFirstUptime + (currentFrameTimeMs - mFirstUptime) / mAnimationsDragFactor;
+      currentFrameTimeMs = mFirstUptime +
+          (currentFrameTimeMs - mFirstUptime) / mAnimationsDragFactor;
     }
 
     if (currentFrameTimeMs > lastFrameTimeMs) {
@@ -290,7 +301,9 @@ public class NodesManager implements EventDispatcherListener {
       while (!mEventQueue.isEmpty()) {
         CopiedEvent copiedEvent = mEventQueue.poll();
         handleEvent(
-            copiedEvent.getTargetTag(), copiedEvent.getEventName(), copiedEvent.getPayload());
+            copiedEvent.getTargetTag(),
+            copiedEvent.getEventName(),
+            copiedEvent.getPayload());
       }
 
       if (!mFrameCallbacks.isEmpty()) {
@@ -314,14 +327,18 @@ public class NodesManager implements EventDispatcherListener {
   }
 
   public void enqueueUpdateViewOnNativeThread(
-      int viewTag, WritableMap nativeProps, boolean trySynchronously) {
+      int viewTag,
+      WritableMap nativeProps,
+      boolean trySynchronously) {
     if (trySynchronously) {
       mTryRunBatchUpdatesSynchronously = true;
     }
     mOperationsInBatch.add(new NativeUpdateOperation(viewTag, nativeProps));
   }
 
-  public void configureProps(Set<String> uiPropsSet, Set<String> nativePropsSet) {
+  public void configureProps(
+      Set<String> uiPropsSet,
+      Set<String> nativePropsSet) {
     uiProps = uiPropsSet;
     nativeProps = nativePropsSet;
   }
@@ -342,9 +359,11 @@ public class NodesManager implements EventDispatcherListener {
       handleEvent(event);
       performOperations();
     } else {
-      String eventName = mCustomEventNamesResolver.resolveCustomEventName(event.getEventName());
+      String eventName = mCustomEventNamesResolver.resolveCustomEventName(
+          event.getEventName());
       int viewTag = event.getViewTag();
-      boolean shouldSaveEvent = mNativeProxy.isAnyHandlerWaitingForEvent(eventName, viewTag);
+      boolean shouldSaveEvent =
+          mNativeProxy.isAnyHandlerWaitingForEvent(eventName, viewTag);
       if (shouldSaveEvent) {
         mEventQueue.offer(new CopiedEvent(event));
       }
@@ -356,7 +375,8 @@ public class NodesManager implements EventDispatcherListener {
     event.dispatch(mCustomEventHandler);
   }
 
-  private void handleEvent(int targetTag, String eventName, @Nullable WritableMap event) {
+  private void
+  handleEvent(int targetTag, String eventName, @Nullable WritableMap event) {
     mCustomEventHandler.receiveEvent(targetTag, eventName, event);
   }
 
@@ -447,36 +467,40 @@ public class NodesManager implements EventDispatcherListener {
     switch (propName) {
       case "opacity" -> {
         return Float.toString(view.getAlpha());
-      }
-      case "zIndex" -> {
+      } case "zIndex" -> {
         return Float.toString(view.getElevation());
-      }
-      case "width" -> {
+      } case "width" -> {
         return Float.toString(PixelUtil.toDIPFromPixel(view.getWidth()));
-      }
-      case "height" -> {
+      } case "height" -> {
         return Float.toString(PixelUtil.toDIPFromPixel(view.getHeight()));
-      }
-      case "top" -> {
+      } case "top" -> {
         return Float.toString(PixelUtil.toDIPFromPixel(view.getTop()));
-      }
-      case "left" -> {
+      } case "left" -> {
         return Float.toString(PixelUtil.toDIPFromPixel(view.getLeft()));
-      }
-      case "backgroundColor" -> {
-        Drawable background = view.getBackground();
-        if (!(background instanceof ReactViewBackgroundDrawable)) {
-          return "unable to resolve background color";
+      } case "backgroundColor" -> {
+        Drawable background = view.getBackground(); int actualColor = -1;
+        if (background instanceof ReactViewBackgroundDrawable) {
+          actualColor = ((ReactViewBackgroundDrawable)background).getColor();
         }
-        int actualColor = ((ReactViewBackgroundDrawable) background).getColor();
-        String invertedColor = String.format("%08x", (actualColor));
+
+        if (background instanceof CSSBackgroundDrawable) {
+          actualColor = ((CSSBackgroundDrawable)background).getColor();
+        }
+
+        if (actualColor == -1) {
+          return "Unable to resolve background color";
+        }
+
+        String invertedColor =
+            String.format("%08x", (0xFFFFFFFF & actualColor));
         // By default transparency is first, color second
-        return "#" + invertedColor.substring(2, 8) + invertedColor.substring(0, 2);
-      }
-      default -> throw new IllegalArgumentException(
-          "[Reanimated] Attempted to get unsupported property "
-              + propName
-              + " with function `getViewProp`");
+        return "#" + invertedColor.substring(2, 8) +
+        invertedColor.substring(0, 2);
+
+        default:
+        throw new IllegalArgumentException(
+            "[Reanimated] Attempted to get unsupported property " + propName +
+            " with function `getViewProp`");
     }
   }
 
