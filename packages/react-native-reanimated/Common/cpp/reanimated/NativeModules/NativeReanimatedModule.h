@@ -11,11 +11,11 @@
 #include <vector>
 
 #include "AnimatedSensorModule.h"
-#include "NativeWorkletsModule.h"
 #include "EventHandlerRegistry.h"
 #include "JSScheduler.h"
 #include "LayoutAnimationsManager.h"
 #include "NativeReanimatedModuleSpec.h"
+#include "NativeWorkletsModule.h"
 #include "PlatformDepMethodsHolder.h"
 #include "SingleInstanceChecker.h"
 #include "UIScheduler.h"
@@ -150,7 +150,8 @@ class NativeReanimatedModule : public NativeReanimatedModuleSpec {
     return isReducedMotion_;
   }
 
-  [[nodiscard]] inline std::shared_ptr<NativeWorkletsModule> getNativeWorkletsModule() const {
+  [[nodiscard]] inline std::shared_ptr<NativeWorkletsModule>
+  getNativeWorkletsModule() const {
     return NativeWorkletsModule_;
   }
 

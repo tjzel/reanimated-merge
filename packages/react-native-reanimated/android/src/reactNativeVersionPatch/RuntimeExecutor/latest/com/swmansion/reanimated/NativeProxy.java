@@ -4,11 +4,8 @@ import androidx.annotation.OptIn;
 import com.facebook.jni.HybridData;
 import com.facebook.proguard.annotations.DoNotStrip;
 import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.RuntimeExecutor;
-import com.facebook.react.bridge.queue.MessageQueueThread;
 import com.facebook.react.common.annotations.FrameworkAPI;
 import com.facebook.react.fabric.FabricUIManager;
-import com.facebook.react.turbomodule.core.CallInvokerHolderImpl;
 import com.facebook.react.uimanager.UIManagerHelper;
 import com.facebook.react.uimanager.common.UIManagerType;
 import com.swmansion.reanimated.layoutReanimation.LayoutAnimations;
@@ -19,10 +16,12 @@ import java.util.HashMap;
 import java.util.Objects;
 
 public class NativeProxy extends NativeProxyCommon {
-  @DoNotStrip @SuppressWarnings("unused") private final HybridData mHybridData;
+  @DoNotStrip
+  @SuppressWarnings("unused")
+  private final HybridData mHybridData;
 
-  public @OptIn(markerClass = FrameworkAPI.class)
-  NativeProxy(ReactApplicationContext context, WorkletsModule workletsModule) {
+  public @OptIn(markerClass = FrameworkAPI.class) NativeProxy(
+      ReactApplicationContext context, WorkletsModule workletsModule) {
     super(context);
     ReactFeatureFlagsWrapper.enableMountHooks();
 
@@ -32,19 +31,19 @@ public class NativeProxy extends NativeProxyCommon {
     LayoutAnimations LayoutAnimations = new LayoutAnimations(context);
 
     if (context.isBridgeless()) {
-      mHybridData = initHybridBridgeless(
-          workletsModule,
-          Objects.requireNonNull(context.getJavaScriptContextHolder()).get(),
-          LayoutAnimations,
-          fabricUIManager
-      );
+      mHybridData =
+          initHybridBridgeless(
+              workletsModule,
+              Objects.requireNonNull(context.getJavaScriptContextHolder()).get(),
+              LayoutAnimations,
+              fabricUIManager);
     } else {
-      mHybridData = initHybrid(
-          workletsModule,
-          Objects.requireNonNull(context.getJavaScriptContextHolder()).get(),
-          LayoutAnimations,
-          fabricUIManager
-      );
+      mHybridData =
+          initHybrid(
+              workletsModule,
+              Objects.requireNonNull(context.getJavaScriptContextHolder()).get(),
+              LayoutAnimations,
+              fabricUIManager);
     }
     prepareLayoutAnimations(LayoutAnimations);
     installJSIBindings();
@@ -57,15 +56,13 @@ public class NativeProxy extends NativeProxyCommon {
       WorkletsModule workletsModule,
       long jsContext,
       LayoutAnimations LayoutAnimations,
-      FabricUIManager fabricUIManager
-  );
+      FabricUIManager fabricUIManager);
 
   private native HybridData initHybridBridgeless(
       WorkletsModule workletsModule,
       long jsContext,
       LayoutAnimations LayoutAnimations,
-      FabricUIManager fabricUIManager
-  );
+      FabricUIManager fabricUIManager);
 
   public native boolean isAnyHandlerWaitingForEvent(String eventName, int emitterReactTag);
 

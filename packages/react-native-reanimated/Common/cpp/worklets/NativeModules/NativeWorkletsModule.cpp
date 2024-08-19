@@ -39,8 +39,7 @@ NativeWorkletsModule::NativeWorkletsModule(
     const std::shared_ptr<UIScheduler> &uiScheduler,
     const std::string &valueUnpackerCode,
     const bool isBridgeless)
-    : NativeWorkletsModuleSpec(
-          jsScheduler->getJSCallInvoker()),
+    : NativeWorkletsModuleSpec(jsScheduler->getJSCallInvoker()),
       isBridgeless_(isBridgeless),
       jsQueue_(jsQueue),
       jsScheduler_(jsScheduler),

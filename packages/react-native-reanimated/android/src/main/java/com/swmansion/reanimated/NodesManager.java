@@ -135,8 +135,7 @@ public class NodesManager implements EventDispatcherListener {
 
   public void initWithContext(ReactApplicationContext reactApplicationContext) {
     mNativeProxy = new NativeProxy(reactApplicationContext, mWorkletsModule);
-    mAnimationManager.setAndroidUIScheduler(
-        mWorkletsModule.getAndroidUIScheduler());
+    mAnimationManager.setAndroidUIScheduler(mWorkletsModule.getAndroidUIScheduler());
     compatibility = new ReaCompatibility(reactApplicationContext);
     compatibility.registerFabricEventListener(this);
   }
@@ -157,26 +156,25 @@ public class NodesManager implements EventDispatcherListener {
   public NodesManager(ReactContext context, WorkletsModule workletsModule) {
     mContext = context;
     mWorkletsModule = workletsModule;
-    int uiManagerType = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
-        ? UIManagerType.FABRIC
-        : UIManagerType.DEFAULT;
+    int uiManagerType =
+        BuildConfig.IS_NEW_ARCHITECTURE_ENABLED ? UIManagerType.FABRIC : UIManagerType.DEFAULT;
     mUIManager = UIManagerHelper.getUIManager(context, uiManagerType);
     assert mUIManager != null;
     mUIImplementation =
         mUIManager instanceof UIManagerModule
             ? ((UIManagerModule) mUIManager).getUIImplementation()
-        : null;
+            : null;
     mCustomEventNamesResolver = mUIManager::resolveCustomDirectEventName;
     mEventEmitter = context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class);
 
     mReactChoreographer = ReactChoreographer.getInstance();
     mChoreographerCallback =
         new GuardedFrameCallback(context) {
-      @Override
-      protected void doFrameGuarded(long frameTimeNanos) {
-        onAnimationFrame(frameTimeNanos);
-      }
-    };
+          @Override
+          protected void doFrameGuarded(long frameTimeNanos) {
+            onAnimationFrame(frameTimeNanos);
+          }
+        };
 
     // We register as event listener at the end, because we pass `this` and we haven't finished
     // constructing an object yet.
@@ -236,30 +234,30 @@ public class NodesManager implements EventDispatcherListener {
       final Semaphore semaphore = new Semaphore(0);
       mContext.runOnNativeModulesQueueThread(
           new GuardedRunnable(mContext.getExceptionHandler()) {
-        @Override
-        public void runGuarded() {
-          boolean queueWasEmpty =
+            @Override
+            public void runGuarded() {
+              boolean queueWasEmpty =
                   UIManagerReanimatedHelper.isOperationQueueEmpty(mUIImplementation);
-          boolean shouldDispatchUpdates = trySynchronously && queueWasEmpty;
-          if (!shouldDispatchUpdates) {
-            semaphore.release();
-          }
-          while (!copiedOperationsQueue.isEmpty()) {
-            NativeUpdateOperation op = copiedOperationsQueue.remove();
-            var shadowNode = mUIImplementation.resolveShadowNode(op.mViewTag);
-            if (shadowNode != null) {
+              boolean shouldDispatchUpdates = trySynchronously && queueWasEmpty;
+              if (!shouldDispatchUpdates) {
+                semaphore.release();
+              }
+              while (!copiedOperationsQueue.isEmpty()) {
+                NativeUpdateOperation op = copiedOperationsQueue.remove();
+                var shadowNode = mUIImplementation.resolveShadowNode(op.mViewTag);
+                if (shadowNode != null) {
                   ((UIManagerModule) mUIManager)
                       .updateView(op.mViewTag, shadowNode.getViewClass(), op.mNativeProps);
+                }
+              }
+              if (queueWasEmpty) {
+                mUIImplementation.dispatchViewUpdates(-1); // no associated batchId
+              }
+              if (shouldDispatchUpdates) {
+                semaphore.release();
+              }
             }
-          }
-          if (queueWasEmpty) {
-            mUIImplementation.dispatchViewUpdates(-1); // no associated batchId
-          }
-          if (shouldDispatchUpdates) {
-            semaphore.release();
-          }
-        }
-      });
+          });
       if (trySynchronously) {
         try {
           // noinspection ResultOfMethodCallIgnored
@@ -484,11 +482,11 @@ public class NodesManager implements EventDispatcherListener {
         return "#" + invertedColor.substring(2, 8) + invertedColor.substring(0, 2);
       }
       default -> {
-      throw new IllegalArgumentException(
-        "[Reanimated] Attempted to get unsupported property "
-          + propName
-          + " with function `getViewProp`");
-    }
+        throw new IllegalArgumentException(
+            "[Reanimated] Attempted to get unsupported property "
+                + propName
+                + " with function `getViewProp`");
+      }
     }
   }
 

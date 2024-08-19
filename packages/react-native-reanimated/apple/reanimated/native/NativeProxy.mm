@@ -63,8 +63,8 @@ createReanimatedModule(REAModule *reaModule, RCTBridge *bridge, WorkletsModule *
 
   const std::shared_ptr<NativeWorkletsModule> NativeWorkletsModule = [workletsModule getNativeWorkletsModule];
 
-  auto nativeReanimatedModule = std::make_shared<NativeReanimatedModule>(
-      NativeWorkletsModule, platformDepMethodsHolder, getIsReducedMotion());
+  auto nativeReanimatedModule =
+      std::make_shared<NativeReanimatedModule>(NativeWorkletsModule, platformDepMethodsHolder, getIsReducedMotion());
 
   commonInit(reaModule, nativeReanimatedModule);
   // Layout Animation callbacks setup
@@ -80,20 +80,23 @@ createReanimatedModule(REAModule *reaModule, RCTBridge *bridge, WorkletsModule *
 }
 
 #if REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED)
-std::shared_ptr<NativeReanimatedModule> createReanimatedModuleBridgeless(REAModule *reaModule, RCTModuleRegistry *moduleRegistry, WorkletsModule *workletsModule)
+std::shared_ptr<NativeReanimatedModule> createReanimatedModuleBridgeless(
+    REAModule *reaModule,
+    RCTModuleRegistry *moduleRegistry,
+    WorkletsModule *workletsModule)
 {
-//  REAModule *reaModule = [moduleRegistry moduleForName:"ReanimatedModule"];
+  //  REAModule *reaModule = [moduleRegistry moduleForName:"ReanimatedModule"];
 
   auto nodesManager = reaModule.nodesManager;
 
   PlatformDepMethodsHolder platformDepMethodsHolder =
       makePlatformDepMethodsHolderBridgeless(moduleRegistry, nodesManager, reaModule);
 
-//  WorkletsModule *workletsModule = [moduleRegistry moduleForName:"WorkletsModule"];
+  //  WorkletsModule *workletsModule = [moduleRegistry moduleForName:"WorkletsModule"];
   const auto NativeWorkletsModule = [workletsModule getNativeWorkletsModule];
 
-  auto nativeReanimatedModule = std::make_shared<NativeReanimatedModule>(
-      NativeWorkletsModule, platformDepMethodsHolder, getIsReducedMotion());
+  auto nativeReanimatedModule =
+      std::make_shared<NativeReanimatedModule>(NativeWorkletsModule, platformDepMethodsHolder, getIsReducedMotion());
 
   commonInit(reaModule, nativeReanimatedModule);
 

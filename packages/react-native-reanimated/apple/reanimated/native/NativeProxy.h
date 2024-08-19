@@ -21,7 +21,10 @@ std::shared_ptr<reanimated::NativeReanimatedModule> createReanimatedModule(
 
 #if REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED)
 std::shared_ptr<reanimated::NativeReanimatedModule>
-createReanimatedModuleBridgeless(REAModule *reaModule, RCTModuleRegistry *moduleRegistry, WorkletsModule *workletsModule);
+createReanimatedModuleBridgeless(
+    REAModule *reaModule,
+    RCTModuleRegistry *moduleRegistry,
+    WorkletsModule *workletsModule);
 #endif // REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED)
 
 void commonInit(

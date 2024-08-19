@@ -155,8 +155,9 @@ class NativeProxy : public jni::HybridClass<NativeProxy> {
       jlong jsContext,
       jni::alias_ref<LayoutAnimations::javaobject> layoutAnimations
 #ifdef RCT_NEW_ARCH_ENABLED
-          ,jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
-              fabricUIManager
+      ,
+      jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
+          fabricUIManager
 #endif
   );
 
@@ -274,8 +275,9 @@ class NativeProxy : public jni::HybridClass<NativeProxy> {
       jsi::Runtime *rnRuntime,
       jni::global_ref<LayoutAnimations::javaobject> layoutAnimations
 #ifdef RCT_NEW_ARCH_ENABLED
-          ,jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
-              fabricUIManager
+      ,
+      jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
+          fabricUIManager
 #endif
   );
 

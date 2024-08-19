@@ -40,8 +40,7 @@ WorkletsModule::WorkletsModule(
           std::make_shared<JMessageQueueThread>(messageQueueThread),
           uiScheduler,
           valueUnpackerCode,
-          /* isBridgeless */ false)) {
-}
+          /* isBridgeless */ false)) {}
 
 #if REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED)
 WorkletsModule::WorkletsModule(
@@ -53,18 +52,18 @@ WorkletsModule::WorkletsModule(
     const std::string &valueUnpackerCode)
     : javaPart_(jni::make_global(jThis)),
       rnRuntime_(rnRuntime),
-        NativeWorkletsModule_(std::make_shared<reanimated::NativeWorkletsModule>(
+      NativeWorkletsModule_(std::make_shared<reanimated::NativeWorkletsModule>(
           *rnRuntime,
-          std::make_shared<reanimated::JSScheduler>(*rnRuntime, runtimeExecutor),
+          std::make_shared<reanimated::JSScheduler>(
+              *rnRuntime,
+              runtimeExecutor),
           std::make_shared<JMessageQueueThread>(messageQueueThread),
           uiScheduler,
           valueUnpackerCode,
-          /* isBridgeless */ true
-          )) {}
+          /* isBridgeless */ true)) {}
 #endif // REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED)
 
-jni::local_ref<WorkletsModule::jhybriddata>
-WorkletsModule::initHybrid(
+jni::local_ref<WorkletsModule::jhybriddata> WorkletsModule::initHybrid(
     jni::alias_ref<jhybridobject> jThis,
     jlong jsContext,
     jni::alias_ref<facebook::react::CallInvokerHolder::javaobject>

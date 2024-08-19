@@ -46,8 +46,7 @@ NativeReanimatedModule::NativeReanimatedModule(
     const std::shared_ptr<NativeWorkletsModule> &NativeWorkletsModule,
     const PlatformDepMethodsHolder &platformDepMethodsHolder,
     const bool isReducedMotion)
-    : NativeReanimatedModuleSpec(
-          NativeWorkletsModule->getJSCallInvoker()),
+    : NativeReanimatedModuleSpec(NativeWorkletsModule->getJSCallInvoker()),
       isReducedMotion_(isReducedMotion),
       NativeWorkletsModule_(NativeWorkletsModule),
       eventHandlerRegistry_(std::make_unique<EventHandlerRegistry>()),

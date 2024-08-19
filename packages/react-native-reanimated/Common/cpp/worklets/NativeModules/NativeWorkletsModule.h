@@ -4,18 +4,18 @@
 #include <react/renderer/uimanager/UIManager.h>
 #endif
 
+#include <cxxreact/MessageQueueThread.h>
 #include <memory>
 #include <string>
 #include <unordered_set>
 #include <utility>
 #include <vector>
-#include <cxxreact/MessageQueueThread.h>
 
-#include "NativeWorkletsModuleSpec.h"
-#include "WorkletRuntime.h"
 #include "JSLogger.h"
 #include "JSScheduler.h"
+#include "NativeWorkletsModuleSpec.h"
 #include "UIScheduler.h"
+#include "WorkletRuntime.h"
 
 namespace reanimated {
 

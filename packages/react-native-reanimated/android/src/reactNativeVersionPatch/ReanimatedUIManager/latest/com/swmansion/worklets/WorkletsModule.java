@@ -1,6 +1,8 @@
 package com.swmansion.worklets;
 
 import androidx.annotation.OptIn;
+import com.facebook.jni.HybridData;
+import com.facebook.proguard.annotations.DoNotStrip;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.RuntimeExecutor;
@@ -10,8 +12,6 @@ import com.facebook.react.module.annotations.ReactModule;
 import com.facebook.react.turbomodule.core.CallInvokerHolderImpl;
 import com.facebook.soloader.SoLoader;
 import com.swmansion.reanimated.NativeWorkletsModuleSpec;
-import com.facebook.proguard.annotations.DoNotStrip;
-import com.facebook.jni.HybridData;
 import java.util.Objects;
 
 // TODO: Clean-up this file.
@@ -26,21 +26,27 @@ public class WorkletsModule extends NativeWorkletsModuleSpec {
   @SuppressWarnings("unused")
   private HybridData mHybridData;
 
-  /** @noinspection unused*/
+  /**
+   * @noinspection unused
+   */
   protected HybridData getHybridData() {
     return mHybridData;
   }
 
-  /** @noinspection JavaJniMissingFunction*/
+  /**
+   * @noinspection JavaJniMissingFunction
+   */
   @OptIn(markerClass = FrameworkAPI.class)
   private native HybridData initHybrid(
-    long jsContext,
-    CallInvokerHolderImpl jsCallInvokerHolder,
-    AndroidUIScheduler androidUIScheduler,
-    MessageQueueThread messageQueueThread,
-    String valueUnpackerCode);
+      long jsContext,
+      CallInvokerHolderImpl jsCallInvokerHolder,
+      AndroidUIScheduler androidUIScheduler,
+      MessageQueueThread messageQueueThread,
+      String valueUnpackerCode);
 
-  /** @noinspection JavaJniMissingFunction*/
+  /**
+   * @noinspection JavaJniMissingFunction
+   */
   @OptIn(markerClass = FrameworkAPI.class)
   private native HybridData initHybridBridgeless(
       long jsContext,
@@ -56,7 +62,9 @@ public class WorkletsModule extends NativeWorkletsModuleSpec {
     mAndroidUIScheduler = new AndroidUIScheduler(reactContext);
   }
 
-  /** @noinspection JavaJniMissingFunction*/
+  /**
+   * @noinspection JavaJniMissingFunction
+   */
   protected native void installJSIBindings();
 
   public AndroidUIScheduler getAndroidUIScheduler() {
@@ -73,16 +81,16 @@ public class WorkletsModule extends NativeWorkletsModuleSpec {
   public boolean installTurboModule(String valueUnpackerCode) {
     var context = getReactApplicationContext();
     CallInvokerHolderImpl holder =
-      (CallInvokerHolderImpl) context.getCatalystInstance().getJSCallInvokerHolder();
+        (CallInvokerHolderImpl) context.getCatalystInstance().getJSCallInvokerHolder();
     ReanimatedMessageQueueThread messageQueueThread = new ReanimatedMessageQueueThread();
 
     mHybridData =
-      initHybrid(
-        Objects.requireNonNull(context.getJavaScriptContextHolder()).get(),
-        holder,
-        mAndroidUIScheduler,
-        messageQueueThread,
-        valueUnpackerCode);
+        initHybrid(
+            Objects.requireNonNull(context.getJavaScriptContextHolder()).get(),
+            holder,
+            mAndroidUIScheduler,
+            messageQueueThread,
+            valueUnpackerCode);
 
     return true;
   }

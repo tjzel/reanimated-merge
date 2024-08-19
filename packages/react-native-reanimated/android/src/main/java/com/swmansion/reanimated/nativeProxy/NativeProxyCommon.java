@@ -54,8 +54,7 @@ public abstract class NativeProxyCommon {
 
   protected NativeProxyCommon(ReactApplicationContext context) {
     mWorkletsModule =
-        Objects.requireNonNull(context.getNativeModule(ReanimatedModule.class))
-            .getWorkletsModule();
+        Objects.requireNonNull(context.getNativeModule(ReanimatedModule.class)).getWorkletsModule();
     mContext = new WeakReference<>(context);
     reanimatedSensorContainer = new ReanimatedSensorContainer(mContext);
     keyboardAnimationManager = new KeyboardAnimationManager(mContext);

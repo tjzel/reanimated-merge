@@ -34,8 +34,9 @@ NativeProxy::NativeProxy(
     jsi::Runtime *rnRuntime,
     jni::global_ref<LayoutAnimations::javaobject> layoutAnimations
 #ifdef RCT_NEW_ARCH_ENABLED
-        ,jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
-            fabricUIManager
+    ,
+    jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
+        fabricUIManager
 #endif
     )
     : javaPart_(jni::make_global(jThis)),
@@ -85,8 +86,9 @@ jni::local_ref<NativeProxy::jhybriddata> NativeProxy::initHybrid(
     jlong jsContext,
     jni::alias_ref<LayoutAnimations::javaobject> layoutAnimations
 #ifdef RCT_NEW_ARCH_ENABLED
-        ,jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
-            fabricUIManager
+    ,
+    jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
+        fabricUIManager
 #endif
 ) {
   auto NativeWorkletsModule =
@@ -97,7 +99,8 @@ jni::local_ref<NativeProxy::jhybriddata> NativeProxy::initHybrid(
       (jsi::Runtime *)jsContext,
       make_global(layoutAnimations)
 #ifdef RCT_NEW_ARCH_ENABLED
-          ,fabricUIManager
+          ,
+      fabricUIManager
 #endif
   );
 }
@@ -109,17 +112,15 @@ jni::local_ref<NativeProxy::jhybriddata> NativeProxy::initHybridBridgeless(
     jlong jsContext,
     jni::alias_ref<LayoutAnimations::javaobject> layoutAnimations,
     jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
-        fabricUIManager
-    ) {
-    auto NativeWorkletsModule =
-            jWorkletsModule->cthis()->getNativeWorkletsModule();
+        fabricUIManager) {
+  auto NativeWorkletsModule =
+      jWorkletsModule->cthis()->getNativeWorkletsModule();
   return makeCxxInstance(
       jThis,
       NativeWorkletsModule,
       (jsi::Runtime *)jsContext,
       make_global(layoutAnimations),
-      fabricUIManager
-      );
+      fabricUIManager);
 }
 #endif // REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED
 
