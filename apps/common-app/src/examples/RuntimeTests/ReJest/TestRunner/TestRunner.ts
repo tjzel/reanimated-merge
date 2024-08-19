@@ -1,6 +1,6 @@
 import type { Component, MutableRefObject, ReactElement } from 'react';
 import { useRef } from 'react';
-import type { BuildFunction, TestCase, TestConfiguration, TestSuite, TestValue, TrackerCallCount } from '../types';
+import type { MaybeAsync, TestCase, TestConfiguration, TestSuite, TestValue, TrackerCallCount } from '../types';
 import { DescribeDecorator, TestDecorator } from '../types';
 import { TestComponent } from '../TestComponent';
 import { applyMarkdown, formatTestName } from '../utils/stringFormatUtils';
@@ -97,7 +97,7 @@ export class TestRunner {
     return await this.render(null);
   }
 
-  public describe(name: string, buildSuite: BuildFunction, decorator: DescribeDecorator | null) {
+  public describe(name: string, buildSuite: MaybeAsync<void>, decorator: DescribeDecorator | null) {
     if (decorator === DescribeDecorator.ONLY) {
       this._includesOnly = true;
     }
@@ -129,7 +129,7 @@ export class TestRunner {
     });
   }
 
-  public test(name: string, run: BuildFunction, decorator: TestDecorator | null) {
+  public test(name: string, run: MaybeAsync<void>, decorator: TestDecorator | null) {
     assertTestSuite(this._currentTestSuite);
     if (decorator === TestDecorator.ONLY) {
       this._includesOnly = true;
@@ -283,17 +283,17 @@ export class TestRunner {
     this._currentTestSuite.beforeAll = job;
   }
 
-  public afterAll(job: () => void) {
+  public afterAll(job: MaybeAsync<void>) {
     assertTestSuite(this._currentTestSuite);
     this._currentTestSuite.afterAll = job;
   }
 
-  public beforeEach(job: () => void) {
+  public beforeEach(job: MaybeAsync<void>) {
     assertTestSuite(this._currentTestSuite);
     this._currentTestSuite.beforeEach = job;
   }
 
-  public afterEach(job: () => void) {
+  public afterEach(job: MaybeAsync<void>) {
     assertTestSuite(this._currentTestSuite);
     this._currentTestSuite.afterEach = job;
   }
