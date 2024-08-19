@@ -32,9 +32,9 @@ NativeProxy::NativeProxy(
     jni::alias_ref<NativeProxy::javaobject> jThis,
     const std::shared_ptr<NativeWorkletsModule> &NativeWorkletsModule,
     jsi::Runtime *rnRuntime,
-    jni::global_ref<LayoutAnimations::javaobject> layoutAnimations,
+    jni::global_ref<LayoutAnimations::javaobject> layoutAnimations
 #ifdef RCT_NEW_ARCH_ENABLED
-        jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
+        ,jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
             fabricUIManager
 #endif
     )
@@ -81,23 +81,23 @@ NativeProxy::~NativeProxy() {
 
 jni::local_ref<NativeProxy::jhybriddata> NativeProxy::initHybrid(
     jni::alias_ref<jhybridobject> jThis,
-    jni::alias_ref<WorkletsNativeProxy::javaobject> jWorkletsNativeProxy,
+    jni::alias_ref<WorkletsModule::javaobject> jWorkletsModule,
     jlong jsContext,
-    jni::alias_ref<LayoutAnimations::javaobject> layoutAnimations,
+    jni::alias_ref<LayoutAnimations::javaobject> layoutAnimations
 #ifdef RCT_NEW_ARCH_ENABLED
-        jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
+        ,jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
             fabricUIManager
 #endif
 ) {
   auto NativeWorkletsModule =
-      jWorkletsNativeProxy->cthis()->getNativeWorkletsModule();
+      jWorkletsModule->cthis()->getNativeWorkletsModule();
   return makeCxxInstance(
       jThis,
       NativeWorkletsModule,
       (jsi::Runtime *)jsContext,
-      make_global(layoutAnimations),
+      make_global(layoutAnimations)
 #ifdef RCT_NEW_ARCH_ENABLED
-          fabricUIManager
+          ,fabricUIManager
 #endif
   );
 }
@@ -105,7 +105,7 @@ jni::local_ref<NativeProxy::jhybriddata> NativeProxy::initHybrid(
 #if REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED)
 jni::local_ref<NativeProxy::jhybriddata> NativeProxy::initHybridBridgeless(
     jni::alias_ref<jhybridobject> jThis,
-    jni::alias_ref<WorkletsNativeProxy::javaobject> jWorkletsNativeProxy,
+    jni::alias_ref<WorkletsModule::javaobject> jWorkletsModule,
     jlong jsContext,
     // jni::alias_ref<react::JRuntimeExecutor::javaobject> runtimeExecutorHolder,
     // jni::alias_ref<AndroidUIScheduler::javaobject> androidUiScheduler,
@@ -116,9 +116,9 @@ jni::local_ref<NativeProxy::jhybriddata> NativeProxy::initHybridBridgeless(
     // const std::string &valueUnpackerCode
     ) {
   // auto uiScheduler = androidUiScheduler->cthis()->getUIScheduler();
-  // auto runtimeExecutor = jWorkletsNativeProxy->cthis()->getRuntimeExecutor();
+  // auto runtimeExecutor = jWorkletsModule->cthis()->getRuntimeExecutor();
     auto NativeWorkletsModule =
-            jWorkletsNativeProxy->cthis()->getNativeWorkletsModule();
+            jWorkletsModule->cthis()->getNativeWorkletsModule();
   return makeCxxInstance(
       jThis,
       NativeWorkletsModule,

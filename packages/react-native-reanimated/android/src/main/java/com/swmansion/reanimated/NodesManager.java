@@ -135,9 +135,8 @@ public class NodesManager implements EventDispatcherListener {
 
   public void initWithContext(ReactApplicationContext reactApplicationContext) {
     mNativeProxy = new NativeProxy(reactApplicationContext, mWorkletsModule);
-    assert mWorkletsModule.getWorkletsNativeProxy() != null;
     mAnimationManager.setAndroidUIScheduler(
-        mWorkletsModule.getWorkletsNativeProxy().getAndroidUIScheduler());
+        mWorkletsModule.getAndroidUIScheduler());
     compatibility = new ReaCompatibility(reactApplicationContext);
     compatibility.registerFabricEventListener(this);
   }

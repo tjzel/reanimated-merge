@@ -31,10 +31,10 @@ namespace reanimated {
 using namespace facebook;
 using namespace facebook::jni;
 
-class WorkletsNativeProxy : public jni::HybridClass<WorkletsNativeProxy> {
+class WorkletsModule : public jni::HybridClass<WorkletsModule> {
  public:
   static auto constexpr kJavaDescriptor =
-      "Lcom/swmansion/worklets/WorkletsNativeProxy;";
+      "Lcom/swmansion/worklets/WorkletsModule;";
   static jni::local_ref<jhybriddata> initHybrid(
       jni::alias_ref<jhybridobject> jThis,
       jlong jsContext,
@@ -69,13 +69,13 @@ class WorkletsNativeProxy : public jni::HybridClass<WorkletsNativeProxy> {
 
  private:
   friend HybridBase;
-  jni::global_ref<WorkletsNativeProxy::javaobject> javaPart_;
+  jni::global_ref<WorkletsModule::javaobject> javaPart_;
   jsi::Runtime *rnRuntime_;
   std::shared_ptr<reanimated::NativeWorkletsModule> NativeWorkletsModule_;
   void installJSIBindings();
 
   /***
-   * Wraps a method of `WorkletsNativeProxy` in a function object capturing
+   * Wraps a method of `WorkletsModule` in a function object capturing
    * `this`
    * @tparam TReturn return type of passed method
    * @tparam TParams paramater types of passed method
@@ -85,7 +85,7 @@ class WorkletsNativeProxy : public jni::HybridClass<WorkletsNativeProxy> {
    */
   template <class TReturn, class... TParams>
   std::function<TReturn(TParams...)> bindThis(
-      TReturn (WorkletsNativeProxy::*methodPtr)(TParams...)) {
+      TReturn (WorkletsModule::*methodPtr)(TParams...)) {
     return [this, methodPtr](TParams &&...args) {
       return (this->*methodPtr)(std::forward<TParams>(args)...);
     };
@@ -96,8 +96,8 @@ class WorkletsNativeProxy : public jni::HybridClass<WorkletsNativeProxy> {
     return javaPart_->getClass()->getMethod<Signature>(methodName.c_str());
   }
 
-  explicit WorkletsNativeProxy(
-      jni::alias_ref<WorkletsNativeProxy::jhybridobject> jThis,
+  explicit WorkletsModule(
+      jni::alias_ref<WorkletsModule::jhybridobject> jThis,
       jsi::Runtime *rnRuntime,
       const std::shared_ptr<facebook::react::CallInvoker> &jsCallInvoker,
       const std::shared_ptr<reanimated::UIScheduler> &uiScheduler,
@@ -109,8 +109,8 @@ class WorkletsNativeProxy : public jni::HybridClass<WorkletsNativeProxy> {
       const std::string &valueUnpackerCode);
 
 #if REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED)
-  explicit WorkletsNativeProxy(
-      jni::alias_ref<WorkletsNativeProxy::jhybridobject> jThis,
+  explicit WorkletsModule(
+      jni::alias_ref<WorkletsModule::jhybridobject> jThis,
       jsi::Runtime *rnRuntime,
       RuntimeExecutor runtimeExecutor,
       const std::shared_ptr<UIScheduler> &uiScheduler,

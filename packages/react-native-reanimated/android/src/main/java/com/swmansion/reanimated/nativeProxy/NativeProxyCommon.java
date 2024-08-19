@@ -25,7 +25,7 @@ import com.swmansion.reanimated.layoutReanimation.AnimationsManager;
 import com.swmansion.reanimated.layoutReanimation.LayoutAnimations;
 import com.swmansion.reanimated.sensor.ReanimatedSensorContainer;
 import com.swmansion.reanimated.sensor.ReanimatedSensorType;
-import com.swmansion.worklets.WorkletsNativeProxy;
+import com.swmansion.worklets.WorkletsModule;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -41,7 +41,7 @@ public abstract class NativeProxyCommon {
     SoLoader.loadLibrary("reanimated");
   }
 
-  protected final WorkletsNativeProxy mWorkletsNativeProxy;
+  protected final WorkletsModule mWorkletsModule;
   protected NodesManager mNodesManager;
   protected final WeakReference<ReactApplicationContext> mContext;
   private final ReanimatedSensorContainer reanimatedSensorContainer;
@@ -53,10 +53,9 @@ public abstract class NativeProxyCommon {
   protected String cppVersion = null;
 
   protected NativeProxyCommon(ReactApplicationContext context) {
-    mWorkletsNativeProxy =
+    mWorkletsModule =
         Objects.requireNonNull(context.getNativeModule(ReanimatedModule.class))
-            .getWorkletsModule()
-            .getWorkletsNativeProxy();
+            .getWorkletsModule();
     mContext = new WeakReference<>(context);
     reanimatedSensorContainer = new ReanimatedSensorContainer(mContext);
     keyboardAnimationManager = new KeyboardAnimationManager(mContext);

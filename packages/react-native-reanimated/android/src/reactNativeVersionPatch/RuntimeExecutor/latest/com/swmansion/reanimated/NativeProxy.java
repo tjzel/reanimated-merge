@@ -15,7 +15,6 @@ import com.swmansion.reanimated.layoutReanimation.LayoutAnimations;
 import com.swmansion.reanimated.layoutReanimation.NativeMethodsHolder;
 import com.swmansion.reanimated.nativeProxy.NativeProxyCommon;
 import com.swmansion.worklets.WorkletsModule;
-import com.swmansion.worklets.WorkletsNativeProxy;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -32,15 +31,13 @@ public class NativeProxy extends NativeProxyCommon {
 
     LayoutAnimations LayoutAnimations = new LayoutAnimations(context);
 
-    var workletsNativeProxy = workletsModule.getWorkletsNativeProxy();
-
     //    ReanimatedMessageQueueThread messageQueueThread = new
     //    ReanimatedMessageQueueThread();
     if (context.isBridgeless()) {
       //      RuntimeExecutor runtimeExecutor =
       //      context.getCatalystInstance().getRuntimeExecutor();
       mHybridData = initHybridBridgeless(
-          workletsNativeProxy,
+          workletsModule,
           Objects.requireNonNull(context.getJavaScriptContextHolder()).get(),
           //              runtimeExecutor,
           //              mAndroidUIScheduler,
@@ -54,7 +51,7 @@ public class NativeProxy extends NativeProxyCommon {
       //          (CallInvokerHolderImpl)
       //          context.getCatalystInstance().getJSCallInvokerHolder();
       mHybridData = initHybrid(
-          workletsNativeProxy,
+          workletsModule,
           Objects.requireNonNull(context.getJavaScriptContextHolder()).get(),
           //              callInvokerHolder,
           //              mAndroidUIScheduler,
@@ -73,7 +70,7 @@ public class NativeProxy extends NativeProxyCommon {
   }
 
   private native HybridData initHybrid(
-      WorkletsNativeProxy workletsNativeProxy,
+      WorkletsModule workletsModule,
       long jsContext,
       //      CallInvokerHolderImpl jsCallInvokerHolder,
       //      AndroidUIScheduler androidUIScheduler,
@@ -84,7 +81,7 @@ public class NativeProxy extends NativeProxyCommon {
   );
 
   private native HybridData initHybridBridgeless(
-      WorkletsNativeProxy workletsNativeProxy,
+      WorkletsModule workletsModule,
       long jsContext,
       //      RuntimeExecutor runtimeExecutor,
       //      AndroidUIScheduler androidUIScheduler,

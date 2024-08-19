@@ -27,7 +27,7 @@
 #include "LayoutAnimations.h"
 #include "NativeReanimatedModule.h"
 #include "UIScheduler.h"
-#include "WorkletsNativeProxy.h"
+#include "WorkletsModule.h"
 
 namespace reanimated {
 
@@ -151,11 +151,11 @@ class NativeProxy : public jni::HybridClass<NativeProxy> {
       "Lcom/swmansion/reanimated/NativeProxy;";
   static jni::local_ref<jhybriddata> initHybrid(
       jni::alias_ref<jhybridobject> jThis,
-      jni::alias_ref<WorkletsNativeProxy::javaobject> jWorkletsNativeProxy,
+      jni::alias_ref<WorkletsModule::javaobject> jWorkletsModule,
       jlong jsContext,
-      jni::alias_ref<LayoutAnimations::javaobject> layoutAnimations,
+      jni::alias_ref<LayoutAnimations::javaobject> layoutAnimations
 #ifdef RCT_NEW_ARCH_ENABLED
-          jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
+          ,jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
               fabricUIManager
 #endif
   );
@@ -163,7 +163,7 @@ class NativeProxy : public jni::HybridClass<NativeProxy> {
 #if REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED)
   static jni::local_ref<jhybriddata> initHybridBridgeless(
       jni::alias_ref<jhybridobject> jThis,
-      jni::alias_ref<WorkletsNativeProxy::javaobject> jWorkletsNativeProxy,
+      jni::alias_ref<WorkletsModule::javaobject> jWorkletsModule,
       jlong jsContext,
 //      jni::alias_ref<react::JRuntimeExecutor::javaobject> runtimeExecutorHolder,
 //      jni::alias_ref<AndroidUIScheduler::javaobject> androidUiScheduler,
@@ -275,9 +275,9 @@ class NativeProxy : public jni::HybridClass<NativeProxy> {
       jni::alias_ref<NativeProxy::jhybridobject> jThis,
       const std::shared_ptr<NativeWorkletsModule> &NativeWorkletsModule,
       jsi::Runtime *rnRuntime,
-      jni::global_ref<LayoutAnimations::javaobject> layoutAnimations,
+      jni::global_ref<LayoutAnimations::javaobject> layoutAnimations
 #ifdef RCT_NEW_ARCH_ENABLED
-          jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
+          ,jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
               fabricUIManager
 #endif
   );

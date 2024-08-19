@@ -9,7 +9,6 @@ import com.swmansion.reanimated.layoutReanimation.LayoutAnimations;
 import com.swmansion.reanimated.layoutReanimation.NativeMethodsHolder;
 import com.swmansion.reanimated.nativeProxy.NativeProxyCommon;
 import com.swmansion.worklets.WorkletsModule;
-import com.swmansion.worklets.WorkletsNativeProxy;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Objects;
@@ -27,7 +26,7 @@ public class NativeProxy extends NativeProxyCommon {
     LayoutAnimations LayoutAnimations = new LayoutAnimations(context);
     mHybridData =
         initHybrid(
-            workletsModule.getWorkletsNativeProxy(),
+            workletsModule,
             Objects.requireNonNull(context.getJavaScriptContextHolder()).get(),
             LayoutAnimations);
     prepareLayoutAnimations(LayoutAnimations);
@@ -38,7 +37,7 @@ public class NativeProxy extends NativeProxyCommon {
   }
 
   private native HybridData initHybrid(
-      WorkletsNativeProxy workletsNativeProxy, long jsContext, LayoutAnimations LayoutAnimations);
+      WorkletsModule workletsModule, long jsContext, LayoutAnimations LayoutAnimations);
 
   public native boolean isAnyHandlerWaitingForEvent(String eventName, int emitterReactTag);
 

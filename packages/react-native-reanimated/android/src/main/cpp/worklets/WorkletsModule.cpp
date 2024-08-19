@@ -18,15 +18,15 @@
 #include "ReanimatedVersion.h"
 #include "WorkletRuntime.h"
 #include "WorkletRuntimeCollector.h"
-#include "WorkletsNativeProxy.h"
+#include "WorkletsModule.h"
 
 namespace reanimated {
 
 using namespace facebook;
 using namespace react;
 
-WorkletsNativeProxy::WorkletsNativeProxy(
-    jni::alias_ref<WorkletsNativeProxy::javaobject> jThis,
+WorkletsModule::WorkletsModule(
+    jni::alias_ref<WorkletsModule::javaobject> jThis,
     jsi::Runtime *rnRuntime,
     const std::shared_ptr<facebook::react::CallInvoker> &jsCallInvoker,
     const std::shared_ptr<reanimated::UIScheduler> &uiScheduler,
@@ -51,8 +51,8 @@ WorkletsNativeProxy::WorkletsNativeProxy(
 }
 
 #if REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED)
-WorkletsNativeProxy::WorkletsNativeProxy(
-    jni::alias_ref<WorkletsNativeProxy::javaobject> jThis,
+WorkletsModule::WorkletsModule(
+    jni::alias_ref<WorkletsModule::javaobject> jThis,
     jsi::Runtime *rnRuntime,
     RuntimeExecutor runtimeExecutor,
     const std::shared_ptr<UIScheduler> &uiScheduler,
@@ -89,7 +89,7 @@ WorkletsNativeProxy::WorkletsNativeProxy(
 #endif // REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED)
 
 #ifdef RCT_NEW_ARCH_ENABLED
-// void WorkletsNativeProxy::commonInit(
+// void WorkletsModule::commonInit(
 //     jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
 //         &fabricUIManager) {
 //   const auto &uiManager =
@@ -107,8 +107,8 @@ WorkletsNativeProxy::WorkletsNativeProxy(
 // }
 #endif // RCT_NEW_ARCH_ENABLED
 
-jni::local_ref<WorkletsNativeProxy::jhybriddata>
-WorkletsNativeProxy::initHybrid(
+jni::local_ref<WorkletsModule::jhybriddata>
+WorkletsModule::initHybrid(
     jni::alias_ref<jhybridobject> jThis,
     jlong jsContext,
     jni::alias_ref<facebook::react::CallInvokerHolder::javaobject>
@@ -135,8 +135,8 @@ WorkletsNativeProxy::initHybrid(
 }
 
 #if REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED)
-jni::local_ref<WorkletsNativeProxy::jhybriddata>
-WorkletsNativeProxy::initHybridBridgeless(
+jni::local_ref<WorkletsModule::jhybriddata>
+WorkletsModule::initHybridBridgeless(
     jni::alias_ref<jhybridobject> jThis,
     jlong jsContext,
     jni::alias_ref<react::JRuntimeExecutor::javaobject> runtimeExecutorHolder,
@@ -160,20 +160,20 @@ WorkletsNativeProxy::initHybridBridgeless(
 }
 #endif // REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED)
 
-void WorkletsNativeProxy::installJSIBindings() {
+void WorkletsModule::installJSIBindings() {
   jsi::Runtime &rnRuntime = *rnRuntime_;
   reanimated::WorkletRuntimeCollector::install(rnRuntime);
 }
 
-void WorkletsNativeProxy::registerNatives() {
+void WorkletsModule::registerNatives() {
   registerHybrid({
-    makeNativeMethod("initHybrid", WorkletsNativeProxy::initHybrid),
+    makeNativeMethod("initHybrid", WorkletsModule::initHybrid),
 #if REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED)
         makeNativeMethod(
-            "initHybridBridgeless", WorkletsNativeProxy::initHybridBridgeless),
+            "initHybridBridgeless", WorkletsModule::initHybridBridgeless),
 #endif // REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED)
         makeNativeMethod(
-            "installJSIBindings", WorkletsNativeProxy::installJSIBindings)
+            "installJSIBindings", WorkletsModule::installJSIBindings)
   });
 }
 } // namespace reanimated
