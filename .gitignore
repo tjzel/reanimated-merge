@@ -65,5 +65,9 @@ react-native-reanimated-tests.js
 !.yarn/sdks
 !.yarn/versions
 
+# clangd
+.cache
+compile_commands.json
+
 # pre-commit
 .husky/log.txt
