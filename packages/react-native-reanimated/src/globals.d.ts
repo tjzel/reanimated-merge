@@ -20,6 +20,7 @@ import type { callGuardDEV } from './initializers';
 import type { WorkletRuntime } from './runtimes';
 import type { RNScreensTurboModuleType } from './screenTransition/commonTypes';
 import type { ReanimatedError } from './errors';
+import type { LoggerConfigInternal } from './logger';
 
 declare global {
   var _REANIMATED_IS_REDUCED_MOTION: boolean | undefined;
@@ -114,4 +115,5 @@ declare global {
     propName: string
   ) => string;
   var ReanimatedError: ReanimatedError;
+  var __loggerConfig: LoggerConfigInternal;
 }

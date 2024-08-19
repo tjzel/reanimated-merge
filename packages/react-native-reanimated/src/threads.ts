@@ -7,12 +7,7 @@ import {
   makeShareableCloneRecursive,
 } from './shareables';
 import { isWorkletFunction } from './commonTypes';
-import type { LogData } from './logger';
-import {
-  logger,
-  logToLogBoxAndConsole,
-  replaceLoggerImplementation,
-} from './logger';
+import { logger, logToLogBoxAndConsole, updateLoggerConfig } from './logger';
 import { registerReanimatedError } from './errors';
 import { shareableMappingCache } from './shareableMappingCache';
 
@@ -267,13 +262,17 @@ export function runOnJS<Args extends unknown[], ReturnValue>(
 // Override the logFunction implementation with the one that adds logs
 // with better stack traces to the LogBox (need to override it after runOnJS
 // is defined).
-replaceLoggerImplementation((data: LogData) => {
-  'worklet';
-  runOnJS(logToLogBoxAndConsole)(data);
+updateLoggerConfig({
+  logFunction(data) {
+    'worklet';
+    runOnJS(logToLogBoxAndConsole)(data);
+  },
 });
 shareableMappingCache.set(logger, makeShareableCloneRecursive(logger));
 
-// Register ReanimatedError in the UI global scope
 if (!shouldBeUseWeb()) {
+  // Register ReanimatedError in the UI global scope
   executeOnUIRuntimeSync(registerReanimatedError)();
+  // Register logger config in the UI global scope
+  executeOnUIRuntimeSync(updateLoggerConfig)();
 }

@@ -6,6 +6,6 @@ module.exports = {
   testEnvironment: 'node',
   transformIgnorePatterns: [],
   globals: {
-    ReanimatedError: true
+    ReanimatedError: true,
   }
 };

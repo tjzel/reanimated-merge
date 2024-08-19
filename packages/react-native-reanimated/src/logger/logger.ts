@@ -38,8 +38,19 @@ function createLog(level: LogLevel, message: string): LogData {
   };
 }
 
-const loggerImpl = {
-  logFunction: logToConsole,
+type LogFunction = (data: LogData) => void;
+
+export type LoggerConfig = {
+  level?: 'warn' | 'error';
+  strict?: boolean;
+};
+
+export type LoggerConfigInternal = {
+  logFunction: LogFunction;
+} & Required<LoggerConfig>;
+
+type LogOptions = {
+  strict?: boolean;
 };
 
 export function logToLogBoxAndConsole(data: LogData) {
@@ -47,23 +58,51 @@ export function logToLogBoxAndConsole(data: LogData) {
   logToConsole(data);
 }
 
-export function replaceLoggerImplementation(
-  logFunction: (data: LogData) => void
+export function updateLoggerConfig(config?: Partial<LoggerConfigInternal>) {
+  'worklet';
+  global.__loggerConfig = {
+    logFunction:
+      // Re-use previously assigned log function if it exists
+      config?.logFunction ?? global.__loggerConfig?.logFunction ?? logToConsole,
+    // Don't reuse previous level and strict values from the global config
+    level: config?.level ?? 'warn',
+    strict: config?.strict ?? false,
+  };
+}
+
+const logLevelImportance = {
+  warn: 1,
+  error: 2,
+  fatal: 3,
+} as const;
+
+function handleLog(
+  level: Exclude<LogLevel, 'syntax'>,
+  message: string,
+  options: LogOptions
 ) {
-  loggerImpl.logFunction = logFunction;
+  'worklet';
+  const config = global.__loggerConfig;
+  if (
+    (options.strict && !config.strict) ||
+    logLevelImportance[level] < logLevelImportance[config.level]
+  ) {
+    return;
+  }
+  config.logFunction(createLog(level, message));
 }
 
 export const logger = {
-  warn(message: string) {
+  warn(message: string, options: LogOptions = {}) {
     'worklet';
-    loggerImpl.logFunction(createLog('warn', message));
+    handleLog('warn', message, options);
   },
-  error(message: string) {
+  error(message: string, options: LogOptions = {}) {
     'worklet';
-    loggerImpl.logFunction(createLog('error', message));
+    handleLog('error', message, options);
   },
-  fatal(message: string) {
+  fatal(message: string, options: LogOptions = {}) {
     'worklet';
-    loggerImpl.logFunction(createLog('fatal', message));
+    handleLog('fatal', message, options);
   },
 };
