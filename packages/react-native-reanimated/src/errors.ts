@@ -18,6 +18,8 @@ export function registerReanimatedError() {
   global.ReanimatedError = ReanimatedErrorFactory;
 }
 
+registerReanimatedError();
+
 const _workletStackDetails = new Map<number, WorkletStackDetails>();
 
 export function registerWorkletStackDetails(
