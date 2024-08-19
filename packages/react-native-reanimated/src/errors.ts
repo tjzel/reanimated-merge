@@ -1,6 +1,28 @@
 'use strict';
 import type { WorkletStackDetails } from './commonTypes';
 
+type ReanimatedError = Error & 'ReanimatedError'; // signed type
+
+export interface ReanimatedErrorConstructor extends Error {
+  new (message?: string): ReanimatedError;
+  (message?: string): ReanimatedError;
+  readonly prototype: ReanimatedError;
+}
+
+const ReanimatedErrorConstructor: ReanimatedErrorConstructor =
+  function ReanimatedError(message?: string) {
+    'worklet';
+    const prefix = '[Reanimated]';
+    const errorInstance = new Error(message ? `${prefix} ${message}` : prefix);
+    errorInstance.name = 'ReanimatedError';
+    return errorInstance;
+  } as ReanimatedErrorConstructor;
+
+export function registerReanimatedError() {
+  'worklet';
+  global.ReanimatedError = ReanimatedErrorConstructor;
+}
+
 const _workletStackDetails = new Map<number, WorkletStackDetails>();
 
 export function registerWorkletStackDetails(
