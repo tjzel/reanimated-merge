@@ -107,28 +107,18 @@ jni::local_ref<NativeProxy::jhybriddata> NativeProxy::initHybridBridgeless(
     jni::alias_ref<jhybridobject> jThis,
     jni::alias_ref<WorkletsModule::javaobject> jWorkletsModule,
     jlong jsContext,
-    // jni::alias_ref<react::JRuntimeExecutor::javaobject> runtimeExecutorHolder,
-    // jni::alias_ref<AndroidUIScheduler::javaobject> androidUiScheduler,
     jni::alias_ref<LayoutAnimations::javaobject> layoutAnimations,
-    // jni::alias_ref<JavaMessageQueueThread::javaobject> messageQueueThread,
     jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
         fabricUIManager
-    // const std::string &valueUnpackerCode
     ) {
-  // auto uiScheduler = androidUiScheduler->cthis()->getUIScheduler();
-  // auto runtimeExecutor = jWorkletsModule->cthis()->getRuntimeExecutor();
     auto NativeWorkletsModule =
             jWorkletsModule->cthis()->getNativeWorkletsModule();
   return makeCxxInstance(
       jThis,
       NativeWorkletsModule,
       (jsi::Runtime *)jsContext,
-      // runtimeExecutor,
-      // uiScheduler,
       make_global(layoutAnimations),
-      // messageQueueThread,
       fabricUIManager
-      // valueUnpackerCode
       );
 }
 #endif // REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED

@@ -14,6 +14,8 @@ import com.facebook.proguard.annotations.DoNotStrip;
 import com.facebook.jni.HybridData;
 import java.util.Objects;
 
+// TODO: Clean-up this file.
+
 @ReactModule(name = WorkletsModule.NAME)
 public class WorkletsModule extends NativeWorkletsModuleSpec {
   static {

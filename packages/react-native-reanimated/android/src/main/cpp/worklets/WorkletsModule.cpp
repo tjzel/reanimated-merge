@@ -31,10 +31,6 @@ WorkletsModule::WorkletsModule(
     const std::shared_ptr<facebook::react::CallInvoker> &jsCallInvoker,
     const std::shared_ptr<reanimated::UIScheduler> &uiScheduler,
     jni::alias_ref<JavaMessageQueueThread::javaobject> messageQueueThread,
-#ifdef RCT_NEW_ARCH_ENABLED
-//    jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
-//        fabricUIManager,
-#endif
     const std::string &valueUnpackerCode)
     : javaPart_(jni::make_global(jThis)),
       rnRuntime_(rnRuntime),
@@ -45,9 +41,6 @@ WorkletsModule::WorkletsModule(
           uiScheduler,
           valueUnpackerCode,
           /* isBridgeless */ false)) {
-#ifdef RCT_NEW_ARCH_ENABLED
-  // commonInit(fabricUIManager);
-#endif // RCT_NEW_ARCH_ENABLED
 }
 
 #if REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED)
@@ -56,24 +49,10 @@ WorkletsModule::WorkletsModule(
     jsi::Runtime *rnRuntime,
     RuntimeExecutor runtimeExecutor,
     const std::shared_ptr<UIScheduler> &uiScheduler,
-    // jni::global_ref<LayoutAnimations::javaobject> layoutAnimations,
     jni::alias_ref<JavaMessageQueueThread::javaobject> messageQueueThread,
-    // jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
-    //     fabricUIManager,
     const std::string &valueUnpackerCode)
     : javaPart_(jni::make_global(jThis)),
       rnRuntime_(rnRuntime),
-  //     nativeReanimatedModule_(std::make_shared<NativeReanimatedModule>(
-  //         *rnRuntime,
-  //         std::make_shared<JSScheduler>(*rnRuntime, runtimeExecutor),
-  //         std::make_shared<JMessageQueueThread>(messageQueueThread),
-  //         uiScheduler,
-  //         getPlatformDependentMethods(),
-  //         valueUnpackerCode,
-  //         /* isBridgeless */ true,
-  //         getIsReducedMotion())),
-  //     layoutAnimations_(std::move(layoutAnimations)) {
-  // commonInit(fabricUIManager);
         NativeWorkletsModule_(std::make_shared<reanimated::NativeWorkletsModule>(
           *rnRuntime,
           std::make_shared<reanimated::JSScheduler>(*rnRuntime, runtimeExecutor),
@@ -81,31 +60,8 @@ WorkletsModule::WorkletsModule(
           uiScheduler,
           valueUnpackerCode,
           /* isBridgeless */ true
-          )) {
-#ifdef RCT_NEW_ARCH_ENABLED
-  // commonInit(fabricUIManager);
-#endif // RCT_NEW_ARCH_ENABLED
-}
+          )) {}
 #endif // REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED)
-
-#ifdef RCT_NEW_ARCH_ENABLED
-// void WorkletsModule::commonInit(
-//     jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
-//         &fabricUIManager) {
-//   const auto &uiManager =
-//       fabricUIManager->getBinding()->getScheduler()->getUIManager();
-//   nativeReanimatedModule_->initializeFabric(uiManager);
-//   // removed temporarily, event listener mechanism needs to be fixed on RN side
-//   // eventListener_ = std::make_shared<EventListener>(
-//   //     [nativeReanimatedModule,
-//   //      getAnimationTimestamp](const RawEvent &rawEvent) {
-//   //       return nativeReanimatedModule->handleRawEvent(
-//   //           rawEvent, getAnimationTimestamp());
-//   //     });
-//   // reactScheduler_ = binding->getScheduler();
-//   // reactScheduler_->addEventListener(eventListener_);
-// }
-#endif // RCT_NEW_ARCH_ENABLED
 
 jni::local_ref<WorkletsModule::jhybriddata>
 WorkletsModule::initHybrid(
@@ -115,10 +71,6 @@ WorkletsModule::initHybrid(
         jsCallInvokerHolder,
     jni::alias_ref<AndroidUIScheduler::javaobject> androidUiScheduler,
     jni::alias_ref<JavaMessageQueueThread::javaobject> messageQueueThread,
-#ifdef RCT_NEW_ARCH_ENABLED
-    // jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
-    //     fabricUIManager,
-#endif
     const std::string &valueUnpackerCode) {
   auto jsCallInvoker = jsCallInvokerHolder->cthis()->getCallInvoker();
   auto uiScheduler = androidUiScheduler->cthis()->getUIScheduler();
@@ -128,9 +80,6 @@ WorkletsModule::initHybrid(
       jsCallInvoker,
       uiScheduler,
       messageQueueThread,
-#ifdef RCT_NEW_ARCH_ENABLED
-      // fabricUIManager,
-#endif
       valueUnpackerCode);
 }
 
@@ -141,10 +90,7 @@ WorkletsModule::initHybridBridgeless(
     jlong jsContext,
     jni::alias_ref<react::JRuntimeExecutor::javaobject> runtimeExecutorHolder,
     jni::alias_ref<AndroidUIScheduler::javaobject> androidUiScheduler,
-    // jni::alias_ref<LayoutAnimations::javaobject> layoutAnimations,
     jni::alias_ref<JavaMessageQueueThread::javaobject> messageQueueThread,
-    // jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
-    //     fabricUIManager,
     const std::string &valueUnpackerCode) {
   auto uiScheduler = androidUiScheduler->cthis()->getUIScheduler();
   auto runtimeExecutor = runtimeExecutorHolder->cthis()->get();
@@ -153,9 +99,7 @@ WorkletsModule::initHybridBridgeless(
       (jsi::Runtime *)jsContext,
       runtimeExecutor,
       uiScheduler,
-      // make_global(layoutAnimations),
       messageQueueThread,
-      // fabricUIManager,
       valueUnpackerCode);
 }
 #endif // REACT_NATIVE_MINOR_VERSION >= 74 && defined(RCT_NEW_ARCH_ENABLED)

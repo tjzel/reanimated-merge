@@ -31,35 +31,19 @@ public class NativeProxy extends NativeProxyCommon {
 
     LayoutAnimations LayoutAnimations = new LayoutAnimations(context);
 
-    //    ReanimatedMessageQueueThread messageQueueThread = new
-    //    ReanimatedMessageQueueThread();
     if (context.isBridgeless()) {
-      //      RuntimeExecutor runtimeExecutor =
-      //      context.getCatalystInstance().getRuntimeExecutor();
       mHybridData = initHybridBridgeless(
           workletsModule,
           Objects.requireNonNull(context.getJavaScriptContextHolder()).get(),
-          //              runtimeExecutor,
-          //              mAndroidUIScheduler,
           LayoutAnimations,
-          //              messageQueueThread,
           fabricUIManager
-          //              valueUnpackerCode
       );
     } else {
-      //      CallInvokerHolderImpl callInvokerHolder =
-      //          (CallInvokerHolderImpl)
-      //          context.getCatalystInstance().getJSCallInvokerHolder();
       mHybridData = initHybrid(
           workletsModule,
           Objects.requireNonNull(context.getJavaScriptContextHolder()).get(),
-          //              callInvokerHolder,
-          //              mAndroidUIScheduler,
           LayoutAnimations,
-          //              messageQueueThread,
           fabricUIManager
-          //            ,
-          //              valueUnpackerCode
       );
     }
     prepareLayoutAnimations(LayoutAnimations);
@@ -72,23 +56,15 @@ public class NativeProxy extends NativeProxyCommon {
   private native HybridData initHybrid(
       WorkletsModule workletsModule,
       long jsContext,
-      //      CallInvokerHolderImpl jsCallInvokerHolder,
-      //      AndroidUIScheduler androidUIScheduler,
       LayoutAnimations LayoutAnimations,
-      //      MessageQueueThread messageQueueThread,
-      FabricUIManager fabricUIManager //,
-      //      String valueUnpackerCode
+      FabricUIManager fabricUIManager
   );
 
   private native HybridData initHybridBridgeless(
       WorkletsModule workletsModule,
       long jsContext,
-      //      RuntimeExecutor runtimeExecutor,
-      //      AndroidUIScheduler androidUIScheduler,
       LayoutAnimations LayoutAnimations,
-      //      MessageQueueThread messageQueueThread,
-      FabricUIManager fabricUIManager //,
-      //      String valueUnpackerCode
+      FabricUIManager fabricUIManager
   );
 
   public native boolean isAnyHandlerWaitingForEvent(String eventName, int emitterReactTag);

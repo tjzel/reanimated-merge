@@ -18,10 +18,6 @@
 #import <RNReanimated/WorkletRuntimeCollector.h>
 #import <RNReanimated/WorkletsModule.h>
 
-#if __has_include(<UIKit/UIAccessibility.h>)
-#import <UIKit/UIAccessibility.h>
-#endif // __has_include(<UIKit/UIAccessibility.h>)
-
 using namespace facebook::react;
 using namespace reanimated;
 
@@ -29,11 +25,11 @@ using namespace reanimated;
 - (void *)runtime;
 @end
 
-// It can be disabled sometimes?
- @interface RCTBridge (RCTTurboModule)
- - (std::shared_ptr<facebook::react::CallInvoker>)jsCallInvoker;
- - (void)_tryAndHandleError:(dispatch_block_t)block;
- @end
+// TODO: This interface doesn't have to be defined sometimes?
+@interface RCTBridge (RCTTurboModule)
+- (std::shared_ptr<facebook::react::CallInvoker>)jsCallInvoker;
+- (void)_tryAndHandleError:(dispatch_block_t)block;
+@end
 
 @implementation WorkletsModule {
 #ifndef NDEBUG
@@ -99,12 +95,7 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(installTurboModule : (nonnull NSString *)
   });
 
   NativeWorkletsModule_ = std::make_shared<NativeWorkletsModule>(
-      rnRuntime,
-      jsScheduler,
-      jsQueue,
-      uiScheduler,
-      std::string([valueUnpackerCode UTF8String]),
-                                                                 _isBridgeless);
+      rnRuntime, jsScheduler, jsQueue, uiScheduler, std::string([valueUnpackerCode UTF8String]), _isBridgeless);
 
   return @YES;
 }

@@ -12,12 +12,6 @@
 #include <thread>
 #include <unordered_map>
 
-#ifdef RCT_NEW_ARCH_ENABLED
-//#include <react/renderer/scheduler/Scheduler.h>
-//#include "ReanimatedCommitShadowNode.h"
-//#include "ShadowTreeCloner.h"
-#endif
-
 #include "AsyncQueue.h"
 #include "CollectionUtils.h"
 #include "RNRuntimeWorkletDecorator.h"
